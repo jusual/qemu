@@ -303,6 +303,11 @@ void armv7m_load_kernel(ARMCPU *cpu, const char *kernel_filename, int mem_size)
             lowaddr = 0;
         }
         if (image_size < 0) {
+           /* 32-bit ARM Intel HEX file */
+           entry = 0;
+           image_size = load_targphys_hex_as(kernel_filename, &entry, as);
+        }
+        if (image_size < 0) {
             error_report("Could not load kernel '%s'", kernel_filename);
             exit(1);
         }
