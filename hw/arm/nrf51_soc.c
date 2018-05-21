@@ -13,6 +13,7 @@
 #include "qemu-common.h"
 #include "hw/arm/arm.h"
 #include "hw/sysbus.h"
+#include "hw/or-irq.h"
 #include "hw/boards.h"
 #include "hw/devices.h"
 #include "hw/misc/unimp.h"
@@ -20,8 +21,10 @@
 #include "sysemu/sysemu.h"
 #include "qemu/log.h"
 #include "cpu.h"
+#include "crypto/random.h"
 
 #include "hw/arm/nrf51_soc.h"
+#include "hw/char/nrf51_uart.h"
 
 #define IOMEM_BASE      0x40000000
 #define IOMEM_SIZE      0x20000000
@@ -37,10 +40,74 @@
 #define SRAM_BASE       0x20000000
 #define SRAM_SIZE       (16 * 1024)
 
+/*
+static uint64_t clock_read(void *opaque, hwaddr addr, unsigned int size)
+{
+    qemu_log_mask(LOG_UNIMP, "%s: 0x%" HWADDR_PRIx " [%u]\n", __func__, addr, size);
+    return 1;
+}
+
+static void clock_write(void *opaque, hwaddr addr, uint64_t data, unsigned int size)
+{
+    qemu_log_mask(LOG_UNIMP, "%s: 0x%" HWADDR_PRIx " <- 0x%" PRIx64 " [%u]\n", __func__, addr, data, size);
+}
+
+
+static const MemoryRegionOps clock_ops = {
+    .read = clock_read,
+    .write = clock_write
+};
+
+static uint64_t nvmc_read(void *opaque, hwaddr addr, unsigned int size)
+{
+    qemu_log_mask(LOG_TRACE, "%s: 0x%" HWADDR_PRIx " [%u]\n", __func__, addr, size);
+    return 1;
+}
+
+static void nvmc_write(void *opaque, hwaddr addr, uint64_t data, unsigned int size)
+{
+    qemu_log_mask(LOG_TRACE, "%s: 0x%" HWADDR_PRIx " <- 0x%" PRIx64 " [%u]\n", __func__, addr, data, size);
+}
+
+
+static const MemoryRegionOps nvmc_ops = {
+    .read = nvmc_read,
+    .write = nvmc_write
+};
+
+static uint64_t rng_read(void *opaque, hwaddr addr, unsigned int size)
+{
+    uint64_t r = 0;
+
+    qemu_log_mask(LOG_UNIMP, "%s: 0x%" HWADDR_PRIx " [%u]\n", __func__, addr, size);
+
+    switch (addr) {
+    case 0x508:
+        qcrypto_random_bytes((uint8_t *)&r, 1, NULL);
+        break;
+    default:
+        r = 1;
+        break;
+    }
+    return r;
+}
+
+static void rng_write(void *opaque, hwaddr addr, uint64_t data, unsigned int size)
+{
+    qemu_log_mask(LOG_UNIMP, "%s: 0x%" HWADDR_PRIx " <- 0x%" PRIx64 " [%u]\n", __func__, addr, data, size);
+}
+
+
+static const MemoryRegionOps rng_ops = {
+    .read = rng_read,
+    .write = rng_write
+};
+*/
 static void nrf51_soc_realize(DeviceState *dev_soc, Error **errp)
 {
     NRF51State *s = NRF51_SOC(dev_soc);
     Error *err = NULL;
+//    DeviceState *dev;
 
     if (!s->board_memory) {
         error_setg(errp, "memory property was not set");
@@ -52,6 +119,10 @@ static void nrf51_soc_realize(DeviceState *dev_soc, Error **errp)
     object_property_set_bool(OBJECT(&s->cpu), true, "realized", &err);
 
     memory_region_add_subregion_overlap(&s->container, 0, s->board_memory, -1);
+/*
+    create_unimplemented_device("nrf51_soc.uart", UART_BASE, UART_SIZE);
+    create_unimplemented_device("nrf51_soc.clock", IOMEM_BASE, 0x1000);
+*/
 
     memory_region_init_ram(&s->flash, OBJECT(s), "nrf51.flash", FLASH_SIZE, &err);
     if (err) {
@@ -67,15 +138,28 @@ static void nrf51_soc_realize(DeviceState *dev_soc, Error **errp)
         return;
     }
     memory_region_add_subregion(&s->container, SRAM_BASE, &s->sram);
-
+/*
+    dev = DEVICE(&s->uart);
+    qdev_prop_set_chr(dev, "chardev", serial_hd(0));
+    object_property_set_bool(OBJECT(&s->uart), true, "realized", &err);
+    if (err) {
+        error_propagate(errp, err);
+        return;
+    }
+*/
     create_unimplemented_device("nrf51_soc.io", IOMEM_BASE, IOMEM_SIZE);
     create_unimplemented_device("nrf51_soc.ficr", FICR_BASE, FICR_SIZE);
     create_unimplemented_device("nrf51_soc.private", 0xF0000000, 0x10000000);
+    create_unimplemented_device("nrf51_soc.uart", UART_BASE, UART_SIZE);
 }
 
 static void nrf51_soc_init(Object *obj)
 {
     NRF51State *s = NRF51_SOC(obj);
+//    SysBusDevice *busdev;
+//    DeviceState *dev;
+    Object *orgate;
+    DeviceState *dev;
 
     memory_region_init(&s->container, obj, "nrf51-container", UINT64_MAX);
 
@@ -85,6 +169,33 @@ static void nrf51_soc_init(Object *obj)
     qdev_set_parent_bus(DEVICE(&s->cpu), sysbus_get_default());
     qdev_prop_set_string(DEVICE(&s->cpu), "cpu-type", ARM_CPU_TYPE_NAME("cortex-m3"));
     qdev_prop_set_uint32(DEVICE(&s->cpu), "num-irq", 96);
+
+    orgate = object_new(TYPE_OR_IRQ);
+    object_property_set_bool(orgate, true, "realized", &error_fatal);
+    dev = DEVICE(orgate);
+    qdev_connect_gpio_out(dev, 0, qdev_get_gpio_in(DEVICE(&s->cpu), 2));
+
+    nrf51_uart_create(UART_BASE,
+                      qdev_get_gpio_in(DEVICE(&s->cpu), 2),
+                      serial_hd(0));
+/*
+    dev = DEVICE(&s->uart);
+    busdev = SYS_BUS_DEVICE(dev);
+    sysbus_mmio_map(busdev, 0, UART_BASE);
+    sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(DEVICE(&s->cpu), 2));
+
+    object_initialize(&s->uart, sizeof(s->uart), TYPE_NRF51_UART);
+    qdev_set_parent_bus(DEVICE(&s->uart), sysbus_get_default());
+
+    memory_region_init_io(&s->clock, NULL, &clock_ops, NULL, "nrf51_soc.clock", 0x1000);
+    memory_region_add_subregion_overlap(get_system_memory(), IOMEM_BASE, &s->clock, -1);
+
+    memory_region_init_io(&s->nvmc, NULL, &nvmc_ops, NULL, "nrf51_soc.nvmc", 0x1000);
+    memory_region_add_subregion_overlap(get_system_memory(), 0x4001E000, &s->nvmc, -1);
+
+    memory_region_init_io(&s->rng, NULL, &rng_ops, NULL, "nrf51_soc.rng", 0x1000);
+    memory_region_add_subregion_overlap(get_system_memory(), 0x4000D000, &s->rng, -1);
+*/
 }
 
 static Property nrf51_soc_properties[] = {

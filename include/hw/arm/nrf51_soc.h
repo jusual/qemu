@@ -13,6 +13,7 @@
 #include "qemu/osdep.h"
 #include "hw/sysbus.h"
 #include "hw/arm/armv7m.h"
+#include "hw/char/nrf51_uart.h"
 
 #define TYPE_NRF51_SOC "nrf51-soc"
 #define NRF51_SOC(obj) \
@@ -27,6 +28,8 @@ typedef struct NRF51State {
 
     ARMv7MState cpu;
 
+    Nrf51UART uart;
+
     MemoryRegion iomem;
     MemoryRegion sram;
     MemoryRegion flash;
@@ -35,6 +38,9 @@ typedef struct NRF51State {
 
     MemoryRegion container;
 
+    MemoryRegion clock;
+    MemoryRegion nvmc;
+    MemoryRegion rng;
 } NRF51State;
 
 #endif
