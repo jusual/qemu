@@ -26,6 +26,10 @@ typedef struct NRF51State {
     DeviceState *nvic;
 
     MemoryRegion iomem;
+
+    MemoryRegion clock;
+    MemoryRegion nvmc;
+    MemoryRegion rng;
 } NRF51State;
 
 #endif
