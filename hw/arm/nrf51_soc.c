@@ -167,7 +167,7 @@ static void nrf51_soc_init(Object *obj)
     object_initialize(&s->cpu, sizeof(s->cpu), TYPE_ARMV7M);
     object_property_add_child(OBJECT(s), "armv7m", OBJECT(&s->cpu), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->cpu), sysbus_get_default());
-    qdev_prop_set_string(DEVICE(&s->cpu), "cpu-type", ARM_CPU_TYPE_NAME("cortex-m3"));
+    qdev_prop_set_string(DEVICE(&s->cpu), "cpu-type", ARM_CPU_TYPE_NAME("cortex-m0"));
     qdev_prop_set_uint32(DEVICE(&s->cpu), "num-irq", 96);
 
     orgate = object_new(TYPE_OR_IRQ);

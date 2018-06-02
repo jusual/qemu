@@ -24,6 +24,22 @@ typedef enum {
 } arm_endianness;
 
 /**
+ * armv6m_init:
+ * @system_memory: System memory region
+ * @mem_size: RAM size, in bytes
+ * @num_irq: number of interrupt pins
+ * @kernel_filename: path to kernel image
+ * @cpu_type: an ARMv6-M CPU implementation
+ *
+ * Initializes CPU and memory for an ARMv6-M based board.
+ *
+ * Returns: ARMV6M device containing CPU and NVIC.
+ */
+DeviceState *armv6m_init(MemoryRegion *system_memory, int mem_size,
+                         int num_irq, const char *kernel_filename,
+                         const char *cpu_type);
+
+/**
  * armv7m_load_kernel:
  * @cpu: CPU
  * @kernel_filename: file to load
