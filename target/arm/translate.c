@@ -9965,7 +9965,8 @@ static bool thumb_insn_is_16bit(DisasContext *s, uint32_t insn)
      * end up actually treating this as two 16-bit insns, though,
      * if it's half of a bl/blx pair that might span a page boundary.
      */
-    if (arm_dc_feature(s, ARM_FEATURE_THUMB2)) {
+    if (arm_dc_feature(s, ARM_FEATURE_THUMB2) ||
+        arm_dc_feature(s, ARM_FEATURE_M)) {
         /* Thumb2 cores (including all M profile ones) always treat
          * 32-bit insns as 32-bit.
          */
@@ -10075,6 +10076,11 @@ static void disas_thumb2_insn(DisasContext *s, uint32_t insn)
 {
     uint32_t imm, shift, offset;
     uint32_t rd, rn, rm, rs;
+    uint32_t armv6m_insn[] = {0xf3808000 /* msr */, 0xf3b08040 /* dsb */,
+                              0xf3b08050 /* dmb */, 0xf3b08060 /* isb */,
+                              0xf3e08000 /* mrs */, 0xf000d000 /* bl */};
+    uint32_t armv6m_mask[] = {0xffe0d000, 0xfff0d0f0, 0xfff0d0f0,
+                              0xfff0d0f0, 0xffe0d000, 0xf800d000};
     TCGv_i32 tmp;
     TCGv_i32 tmp2;
     TCGv_i32 tmp3;
@@ -10084,11 +10090,25 @@ static void disas_thumb2_insn(DisasContext *s, uint32_t insn)
     int shiftop;
     int conds;
     int logic_cc;
+    int i;
+    bool found = false;
 
-    /* The only 32 bit insn that's allowed for Thumb1 is the combined
-     * BL/BLX prefix and suffix.
+    /*
+     * ARMv6-M supports limited set of Thumb2 instructions.
+     * Other architectures in Thumb1 mode could allow only 32-bit
+     * combined BL/BLX prefix and suffix.
      */
-    if ((insn & 0xf800e800) != 0xf000e800) {
+    if (arm_dc_feature(s, ARM_FEATURE_M) && arm_dc_feature(s, ARM_FEATURE_V6)) {
+        for (i = 0; i < 6; i++) {
+            if ((insn & armv6m_mask[i]) == armv6m_insn[i]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            goto illegal_op;
+        }
+    } else if ((insn & 0xf800e800) != 0xf000e800)  {
         ARCH(6T2);
     }
 
@@ -11009,7 +11029,10 @@ static void disas_thumb2_insn(DisasContext *s, uint32_t insn)
                         }
                         break;
                     case 3: /* Special control operations.  */
-                        ARCH(7);
+                        if (!arm_dc_feature(s, ARM_FEATURE_V7) ||
+                            !(arm_dc_feature(s, ARM_FEATURE_V6) &&
+                            arm_dc_feature(s, ARM_FEATURE_M)))
+                            goto illegal_op;
                         op = (insn >> 4) & 0xf;
                         switch (op) {
                         case 2: /* clrex */
