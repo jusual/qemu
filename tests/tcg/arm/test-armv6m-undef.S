@@ -120,6 +120,38 @@ exc_reset:
     b not_reached
 1:
 
+    adr r0, some_data
+    movs r1, 2
+    ldr r2, [r0, r1]
+    nop
+    b not_reached
+
+    adr r0, some_data
+    movs r1, 1
+    ldrh r2, [r0, r1]
+    nop
+    b not_reached
+
+    adr r0, some_data
+    movs r1, 1
+    ldrsh r2, [r0, r1]
+    nop
+    b not_reached
+
+    adr r0, some_data
+    movs r1, 2
+    movs r2, 0
+    str r2, [r0, r1]
+    nop
+    b not_reached
+
+    adr r0, some_data
+    movs r1, 1
+    movs r2, 0
+    strh r2, [r0, r1]
+    nop
+    b not_reached
+
     /* Success! */
     movs r0, 1
     b exit
@@ -127,6 +159,13 @@ exc_reset:
 not_reached: /* Failure :( */
     movs r0, 0
     b exit
+
+.align 2
+some_data:
+    .short 0x1234
+    .short 0x5678
+    .short 0x9876
+    .short 0x5432
 
 /* When a HardFault occurs, return to pc+6 (test cases are 3 halfwords long) */
 exc_hard_fault:
@@ -152,3 +191,4 @@ exit:
 .align 2
 ADP_Stopped_ApplicationExit:
     .word 0x20026
+
