@@ -12,6 +12,7 @@
 
 #include "qemu/osdep.h"
 #include "hw/sysbus.h"
+#include "hw/char/nrf51_uart.h"
 
 #define TYPE_NRF51_SOC "nrf51-soc"
 #define NRF51_SOC(obj) \
@@ -24,6 +25,8 @@ typedef struct NRF51State {
     /*< public >*/
     char *kernel_filename;
     DeviceState *nvic;
+
+    Nrf51UART uart;
 
     MemoryRegion iomem;
 

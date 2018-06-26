@@ -22,6 +22,7 @@
 #include "crypto/random.h"
 
 #include "hw/arm/nrf51_soc.h"
+#include "hw/char/nrf51_uart.h"
 
 #define IOMEM_BASE      0x40000000
 #define IOMEM_SIZE      0x20000000
@@ -97,10 +98,19 @@ static const MemoryRegionOps rng_ops = {
     .write = rng_write
 };
 
+static void nrf51_soc_initfn(Object *obj)
+{
+    NRF51State *s = NRF51_SOC(obj);
+
+    object_initialize(&s->uart, sizeof(s->uart), TYPE_NRF51_UART);
+    qdev_set_parent_bus(DEVICE(&s->uart), sysbus_get_default());
+}
 
 static void nrf51_soc_realize(DeviceState *dev_soc, Error **errp)
 {
     NRF51State *s = NRF51_SOC(dev_soc);
+    DeviceState *dev;
+    SysBusDevice *busdev;
     Error *err = NULL;
 
     /* IO space */
@@ -146,6 +156,17 @@ static void nrf51_soc_realize(DeviceState *dev_soc, Error **errp)
 
     memory_region_init_io(&s->rng, NULL, &rng_ops, NULL, "nrf51_soc.rng", 0x1000);
     memory_region_add_subregion_overlap(get_system_memory(), 0x4000D000, &s->rng, -1);
+
+    dev = DEVICE(&s->uart);
+    qdev_prop_set_chr(dev, "chardev", serial_hd(0));
+    object_property_set_bool(OBJECT(&s->uart), true, "realized", &err);
+    if (err != NULL) {
+        error_propagate(errp, err);
+        return;
+    }
+    busdev = SYS_BUS_DEVICE(dev);
+    sysbus_mmio_map(busdev, 0, UART_BASE);
+    sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(s->nvic, 2));
 }
 
 static Property nrf51_soc_properties[] = {
@@ -165,6 +186,7 @@ static const TypeInfo nrf51_soc_info = {
     .name          = TYPE_NRF51_SOC,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(NRF51State),
+    .instance_init = nrf51_soc_initfn,
     .class_init    = nrf51_soc_class_init,
 };
 
