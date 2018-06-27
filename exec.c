@@ -3216,8 +3216,11 @@ static MemTxResult flatview_write_continue(FlatView *fv, hwaddr addr,
     MemTxResult result = MEMTX_OK;
     bool release_lock = false;
 
+    printf("in flatview_write_continue\n");
+
     for (;;) {
         if (!memory_access_is_direct(mr, true)) {
+            printf("memory access is not direct; addr = %lx; memreg = %s\n", addr, mr->name);
             release_lock |= prepare_mmio_access(mr);
             l = memory_access_size(mr, l, addr1);
             /* XXX: could force current_cpu to NULL to avoid
@@ -3226,6 +3229,7 @@ static MemTxResult flatview_write_continue(FlatView *fv, hwaddr addr,
             result |= memory_region_dispatch_write(mr, addr1, val, l, attrs);
         } else {
             /* RAM case */
+            printf("memory access is  direct; addr = %lx; memreg = %s\n", addr, mr->name);
             ptr = qemu_ram_ptr_length(mr->ram_block, addr1, &l, false);
             memcpy(ptr, buf, l);
             invalidate_and_set_dirty(mr, addr1, l);

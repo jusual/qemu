@@ -68,6 +68,8 @@ static uint64_t uart_read(void *opaque, hwaddr addr, unsigned int size)
     Nrf51UART *s = NRF51_UART(opaque);
     uint64_t r;
 
+    printf("in uart_read %lx\n", addr);
+
     switch (addr) {
     case A_RXD:
         r = s->rx_fifo[s->rx_fifo_pos];

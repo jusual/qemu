@@ -773,6 +773,8 @@ static uint32_t nvic_readl(NVICState *s, uint32_t offset, MemTxAttrs attrs)
     ARMCPU *cpu = s->cpu;
     uint32_t val;
 
+    printf("in nvic: readl\n");
+
     switch (offset) {
     case 4: /* Interrupt Control Type.  */
         return ((s->num_irq - NVIC_FIRST_IRQ) / 32) - 1;
@@ -1219,6 +1221,7 @@ static void nvic_writel(NVICState *s, uint32_t offset, uint32_t value,
 {
     ARMCPU *cpu = s->cpu;
 
+    printf("in nvic: writel\n");
     switch (offset) {
     case 0xc: /* CPPWR */
         if (!arm_feature(&cpu->env, ARM_FEATURE_V8)) {
@@ -1754,6 +1757,11 @@ static MemTxResult nvic_sysreg_read(void *opaque, hwaddr addr,
     unsigned i, startvec, end;
     uint32_t val;
 
+//    FILE *f = fopen("temp_output", "w");
+//    fprintf(f, "In nvic\n");
+//    fclose(f);
+    printf("in nvic: sysreg read\n");
+
     if (attrs.user && !nvic_user_access_ok(s, addr, attrs)) {
         /* Generate BusFault for unprivileged accesses */
         return MEMTX_ERROR;
@@ -1872,6 +1880,8 @@ static MemTxResult nvic_sysreg_write(void *opaque, hwaddr addr,
     unsigned i, startvec, end;
     unsigned setval = 0;
 
+    printf("in nvic: sysreg_write\n");
+
     trace_nvic_sysreg_write(addr, value, size);
 
     if (attrs.user && !nvic_user_access_ok(s, addr, attrs)) {
@@ -1983,6 +1993,8 @@ static MemTxResult nvic_sysreg_ns_write(void *opaque, hwaddr addr,
 {
     MemoryRegion *mr = opaque;
 
+    printf("in nvic: sysreg_ns_write\n");
+
     if (attrs.secure) {
         /* S accesses to the alias act like NS accesses to the real region */
         attrs.secure = 0;
@@ -2001,6 +2013,8 @@ static MemTxResult nvic_sysreg_ns_read(void *opaque, hwaddr addr,
                                        MemTxAttrs attrs)
 {
     MemoryRegion *mr = opaque;
+
+    printf("in nvic: sysreg_ns_read\n");
 
     if (attrs.secure) {
         /* S accesses to the alias act like NS accesses to the real region */
@@ -2316,6 +2330,7 @@ static void armv7m_nvic_realize(DeviceState *dev, Error **errp)
      */
     regionlen = arm_feature(&s->cpu->env, ARM_FEATURE_V8) ? 0x21000 : 0x1000;
     memory_region_init(&s->container, OBJECT(s), "nvic", regionlen);
+    printf("regiser mmio region\n");
     /* The system register region goes at the bottom of the priority
      * stack as it covers the whole page.
      */
