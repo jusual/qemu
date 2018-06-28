@@ -52,7 +52,7 @@ static inline DeviceState *nrf51_uart_create(hwaddr addr,
     qdev_prop_set_chr(dev, "chardev", chr);
 //    qdec_init_nofail(dev);
     sysbus_mmio_map(s, 0, addr);
-    sysbus_connect_irq(s, 0, irq);
+//    sysbus_connect_irq(s, 0, irq);
 
     return dev;
 }

@@ -159,7 +159,7 @@ static void nrf51_soc_init(Object *obj)
 //    SysBusDevice *busdev;
 //    DeviceState *dev;
     Object *orgate;
-    DeviceState *dev;
+    //DeviceState *dev;
 
     memory_region_init(&s->container, obj, "nrf51-container", UINT64_MAX);
 
@@ -172,12 +172,12 @@ static void nrf51_soc_init(Object *obj)
 
     orgate = object_new(TYPE_OR_IRQ);
     object_property_set_bool(orgate, true, "realized", &error_fatal);
-    dev = DEVICE(orgate);
-    qdev_connect_gpio_out(dev, 0, qdev_get_gpio_in(DEVICE(&s->cpu), 2));
+  //  dev = DEVICE(orgate);
+//    qdev_connect_gpio_out(dev, 0, qdev_get_gpio_in(DEVICE(&s->cpu), 2));
 
-    nrf51_uart_create(UART_BASE,
-                      qdev_get_gpio_in(DEVICE(&s->cpu), 2),
-                      serial_hd(0));
+//    nrf51_uart_create(UART_BASE,
+//                      qdev_get_gpio_in(DEVICE(&s->cpu), 2),
+//                      serial_hd(0));
 /*
     dev = DEVICE(&s->uart);
     busdev = SYS_BUS_DEVICE(dev);
