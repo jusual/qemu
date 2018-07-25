@@ -1,0 +1,760 @@
+nvm_realize
+nvm_reset
+uicr_read: 0x5 245760
+clock_read: 0x524 -> 0x3 [4]
+clock_write: 0x524 <- 0x3 [4]
+clock_read: 0x524 -> 0x3 [4]
+clock_write: 0x524 <- 0x3 [4]
+clock_write: 0x518 <- 0x1 [4]
+clock_write: 0x104 <- 0x0 [4]
+clock_write: 0x8 <- 0x1 [4]
+clock_read: 0x104 -> 0x1 [4]
+clock_read: 0x51c -> 0x1 [4]
+uicr_read: 0x5 245760
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0x11348)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0x11308)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x11004)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x11008)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x11508)
+nrf51.iomem: unimplemented device read (size 4, offset 0x11504)
+clock_write: 0x514 <- 0x1 [4]
+clock_write: 0x52c <- 0x8 [4]
+clock_write: 0x52c <- 0x1900 [4]
+clock_write: 0x528 <- 0x4300f903 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1ffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x1ffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xcffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xcffc)
+nvmc_write: 0x504 0
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xeffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xeffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xbffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xbffc)
+nrf51.iomem: unimplemented device write (size 4, value 0xffffc000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f580)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f584)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f588)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f58c)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f800)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f800)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f808)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f80c)
+clock_read: 0x408 -> 0x1 [4]
+clock_read: 0x414 -> 0x1 [4]
+clock_read: 0x41c -> 0x1 [4]
+clock_write: 0xc <- 0x1 [4]
+clock_write: 0x104 <- 0x0 [4]
+clock_write: 0x518 <- 0x0 [4]
+clock_write: 0x304 <- 0x2 [4]
+clock_write: 0x8 <- 0x1 [4]
+clock_read: 0x104 -> 0x1 [4]
+clock_read: 0x418 -> 0x10000 [4]
+clock_read: 0x418 -> 0x10000 [4]
+clock_write: 0x308 <- 0x2 [4]
+clock_write: 0x104 <- 0x0 [4]
+clock_write: 0x308 <- 0x19 [4]
+clock_write: 0x100 <- 0x0 [4]
+clock_write: 0x10c <- 0x0 [4]
+clock_read: 0x40c -> 0x1 [4]
+clock_write: 0x10 <- 0x1 [4]
+clock_write: 0x304 <- 0x19 [4]
+clock_write: 0x538 <- 0x1 [4]
+clock_write: 0x18 <- 0x1 [4]
+clock_write: 0x110 <- 0x0 [4]
+clock_write: 0x14 <- 0x1 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0xffffc000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f580)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f584)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f588)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f58c)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f800)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f800)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f808)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f80c)
+clock_write: 0x308 <- 0x4 [4]
+clock_write: 0x108 <- 0x0 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x20000, offset 0xb308)
+nrf51.iomem: unimplemented device write (size 4, value 0x20000, offset 0xb348)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb544)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb144)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0xb308)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0xb348)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb540)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb140)
+nrf51.iomem: unimplemented device write (size 4, value 0x80000000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb004)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb008)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb140)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb144)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb148)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb000)
+nrf51.iomem: unimplemented device write (size 4, value 0x3800000, offset 0x1f508)
+clock_write: 0x52c <- 0x2000 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb004)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb008)
+nrf51.iomem: unimplemented device read (size 4, offset 0xb504)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb140)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb144)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb148)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1ffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x1ffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xcffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xcffc)
+nvmc_write: 0x504 0
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xeffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xeffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xbffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xbffc)
+nrf51.iomem: unimplemented device write (size 4, value 0xffffc000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f580)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f584)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f588)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f58c)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f800)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f800)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f808)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f80c)
+nrf51.iomem: unimplemented device write (size 4, value 0xffffc000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f580)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f584)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f588)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f58c)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f800)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f800)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f808)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f80c)
+clock_write: 0x18 <- 0x1 [4]
+clock_read: 0x10c -> 0x1 [4]
+clock_write: 0x10c <- 0x0 [4]
+clock_write: 0x308 <- 0xffffffff [4]
+clock_write: 0x52c <- 0x0 [4]
+clock_write: 0x528 <- 0x0 [4]
+clock_read: 0x524 -> 0x3 [4]
+clock_write: 0x524 <- 0x3 [4]
+clock_write: 0x518 <- 0x0 [4]
+clock_write: 0x104 <- 0x0 [4]
+clock_write: 0x8 <- 0x1 [4]
+clock_read: 0x104 -> 0x1 [4]
+uart_write: 0x524 0x275000
+uart_write: 0x56c 0x0
+uart_write: 0x500 0x4
+uart_write: 0x8 0x1
+uart_write: 0x0 0x1
+uart_write: 0x108 0x0
+uart_write: 0x51c 0x0
+uart_write: 0x508 0x1f
+uart_write: 0x50c 0x18
+uart_write: 0x510 0x1f
+uart_write: 0x514 0x19
+uart_write: 0x524 0x1d7e000
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x617c)
+nrf51.iomem: unimplemented device write (size 4, value 0x80000000, offset 0x6304)
+nvmc_write: 0x504 2
+nvmc_read: 0x400 1
+nvmc_write: 0x508 242688
+nvmc_read: 0x400 1
+nvmc_write: 0x504 0
+nvmc_read: 0x400 1
+nvmc_write: 0x504 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_write: 0x504 0
+nvmc_read: 0x400 1
+nvmc_write: 0x504 2
+nvmc_read: 0x400 1
+nvmc_write: 0x508 244736
+nvmc_read: 0x400 1
+nvmc_write: 0x504 0
+nvmc_read: 0x400 1
+nvmc_write: 0x504 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_read: 0x400 1
+nvmc_write: 0x504 0
+nvmc_read: 0x400 1
+twi1_write: 0x108 <- 0x0 [4]
+twi1_write: 0x11c <- 0x0 [4]
+twi1_write: 0x508 <- 0x0 [4]
+twi1_write: 0x50c <- 0x1e [4]
+twi1_write: 0x524 <- 0x1980000 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x40004138, offset 0x1f510)
+nrf51.iomem: unimplemented device write (size 4, value 0x4000401c, offset 0x1f514)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x1f508)
+twi1_write: 0x500 <- 0x5 [4]
+twi1_read: 0x500 -> 0x5 [4]
+twi1_write: 0x500 <- 0x0 [4]
+twi1_write: 0x500 <- 0x5 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+clock_write: 0x100 <- 0x0 [4]
+clock_write: 0x0 <- 0x1 [4]
+clock_read: 0x100 -> 0x1 [4]
+twi0_write: 0x588 <- 0x1d [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x2a [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x0 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0x1d [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x2b [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x10 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0x1d [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x2d [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x1 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0x1d [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x2e [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x1 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0x1d [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0xe [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x0 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0x1d [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x2a [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x21 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0xe [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x10 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x0 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0xe [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x8 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x588 <- 0xe [4]
+twi0_write: 0x200 <- 0x1 [4]
+twi0_write: 0x108 <- 0x0 [4]
+twi0_write: 0x0 <- 0x1 [4]
+twi0_write: 0x200 <- 0x2 [4]
+twi0_write: 0x20 <- 0x1 [4]
+twi0_read: 0x108 -> 0x1 [4]
+twi0_write: 0x108 <- 0x0 [4]
+twi0_read: 0x518 -> 0x0 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x588 <- 0xe [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x11 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0xa0 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+twi0_write: 0x588 <- 0xe [4]
+twi0_write: 0x200 <- 0x0 [4]
+twi0_write: 0x8 <- 0x1 [4]
+twi0_write: 0x51c <- 0x10 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x51c <- 0x61 [4]
+twi0_read: 0x11c -> 0x1 [4]
+twi0_write: 0x11c <- 0x0 [4]
+twi0_write: 0x104 <- 0x0 [4]
+twi0_write: 0x14 <- 0x1 [4]
+twi0_read: 0x104 -> 0x1 [4]
+twi0_write: 0x124 <- 0x0 [4]
+twi0_write: 0x500 <- 0x0 [4]
+twi0_write: 0xffc <- 0x0 [4]
+twi0_write: 0xffc <- 0x1 [4]
+twi0_write: 0x508 <- 0x0 [4]
+twi0_write: 0x50c <- 0x1e [4]
+twi0_write: 0x524 <- 0x1980000 [4]
+twi0_write: 0x500 <- 0x5 [4]
+clock_read: 0x518 -> 0x0 [4]
+clock_write: 0x52c <- 0x1900 [4]
+clock_write: 0x528 <- 0x4300f903 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1ffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x1ffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xcffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xcffc)
+nvmc_write: 0x504 0
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xeffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xeffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xfffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xbffc)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xbffc)
+nrf51.iomem: unimplemented device write (size 4, value 0xffffc000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f580)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f584)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f588)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f58c)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f800)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f800)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f808)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f80c)
+clock_read: 0x408 -> 0x1 [4]
+clock_read: 0x414 -> 0x1 [4]
+clock_read: 0x41c -> 0x1 [4]
+clock_write: 0xc <- 0x1 [4]
+clock_write: 0x104 <- 0x0 [4]
+clock_write: 0x518 <- 0x0 [4]
+clock_write: 0x304 <- 0x2 [4]
+clock_write: 0x8 <- 0x1 [4]
+clock_read: 0x104 -> 0x1 [4]
+clock_read: 0x418 -> 0x10000 [4]
+clock_read: 0x418 -> 0x10000 [4]
+clock_write: 0x308 <- 0x2 [4]
+clock_write: 0x104 <- 0x0 [4]
+clock_write: 0x308 <- 0x19 [4]
+clock_write: 0x100 <- 0x0 [4]
+clock_write: 0x10c <- 0x0 [4]
+clock_read: 0x40c -> 0x1 [4]
+clock_write: 0x10 <- 0x1 [4]
+clock_write: 0x304 <- 0x19 [4]
+clock_write: 0x538 <- 0x10 [4]
+clock_write: 0x18 <- 0x1 [4]
+clock_write: 0x110 <- 0x0 [4]
+clock_write: 0x14 <- 0x1 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0xffffc000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f580)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f584)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f588)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f58c)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f800)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f800)
+nrf51.iomem: unimplemented device read (size 4, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f804)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f808)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x1f80c)
+clock_write: 0x308 <- 0x4 [4]
+clock_write: 0x108 <- 0x0 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x20000, offset 0xb308)
+nrf51.iomem: unimplemented device write (size 4, value 0x20000, offset 0xb348)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb544)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb144)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0xb308)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0xb348)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb540)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb140)
+nrf51.iomem: unimplemented device write (size 4, value 0x80000000, offset 0x1f508)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb004)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb008)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb140)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb144)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb148)
+nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0xb000)
+nrf51.iomem: unimplemented device write (size 4, value 0x3800000, offset 0x1f508)
+clock_write: 0x52c <- 0x1c00 [4]
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x150c)
+uicr_read: 0x5 245760
+uicr_read: 0x5 245760
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x150c)
+nrf51.iomem: unimplemented device read (size 4, offset 0xb504)
+nrf51.iomem: unimplemented device read (size 4, offset 0xb504)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb144)
+nrf51.iomem: unimplemented device write (size 4, value 0x20000, offset 0xb304)
+nrf51.iomem: unimplemented device write (size 4, value 0x20000, offset 0xb344)
+nrf51.iomem: unimplemented device write (size 4, value 0xf, offset 0xb544)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0xb308)
+nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0xb140)
+nrf51.iomem: unimplemented device write (size 4, value 0x10000, offset 0xb344)
+nrf51.iomem: unimplemented device write (size 4, value 0x3f, offset 0xb540)
+nrf51.iomem: unimplemented device write (size 4, value 0x80000000, offset 0x1f504)
