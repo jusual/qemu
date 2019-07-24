@@ -517,6 +517,7 @@ static int raw_open_common(BlockDriverState *bs, QDict *options,
     aio = qapi_enum_parse(&BlockdevAioOptions_lookup,
                           qemu_opt_get(opts, "aio"),
                           aio_default, &local_err);
+    qemu_opts_print(opts, "#");
     if (local_err) {
         error_propagate(errp, local_err);
         ret = -EINVAL;
@@ -526,6 +527,13 @@ static int raw_open_common(BlockDriverState *bs, QDict *options,
     s->use_linux_aio = (aio == BLOCKDEV_AIO_OPTIONS_NATIVE);
 #ifdef CONFIG_LINUX_IO_URING
     s->use_linux_io_uring = (aio == BLOCKDEV_AIO_OPTIONS_IO_URING);
+    sleep(2);
+    fprintf(stderr, "%s: use linux io_uring: %d threads:%d native:%d io_uring:%d\n",
+           filename,
+           s->use_linux_io_uring,
+           aio == BLOCKDEV_AIO_OPTIONS_THREADS,
+           aio == BLOCKDEV_AIO_OPTIONS_NATIVE,
+           aio == BLOCKDEV_AIO_OPTIONS_IO_URING);
 #endif
 
     locking = qapi_enum_parse(&OnOffAuto_lookup,
