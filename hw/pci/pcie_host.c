@@ -24,6 +24,7 @@
 #include "hw/pci/pcie_host.h"
 #include "qemu/module.h"
 #include "exec/address-spaces.h"
+#include "trace.h"
 
 /* a helper function to get a PCIDevice for a given mmconfig address */
 static inline PCIDevice *pcie_dev_find_by_mmcfg_addr(PCIBus *s,
@@ -42,6 +43,8 @@ static void pcie_mmcfg_data_write(void *opaque, hwaddr mmcfg_addr,
     uint32_t addr;
     uint32_t limit;
 
+    trace_pcie_mmcfg_data_write(mmcfg_addr, val, len);
+
     if (!pci_dev) {
         return;
     }
@@ -59,6 +62,8 @@ static uint64_t pcie_mmcfg_data_read(void *opaque,
     PCIDevice *pci_dev = pcie_dev_find_by_mmcfg_addr(s, mmcfg_addr);
     uint32_t addr;
     uint32_t limit;
+
+    trace_pcie_mmcfg_data_read(mmcfg_addr, len);
 
     if (!pci_dev) {
         return ~0x0;
