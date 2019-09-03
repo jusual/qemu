@@ -1044,6 +1044,8 @@ static void device_finalize(Object *obj)
 
     DeviceState *dev = DEVICE(obj);
 
+    trace_device_finalize(dev->canonical_path);
+
     QLIST_FOREACH_SAFE(ngl, &dev->gpios, node, next) {
         QLIST_REMOVE(ngl, node);
         qemu_free_irqs(ngl->in, ngl->num_in);
@@ -1081,6 +1083,8 @@ static void device_unparent(Object *obj)
     DeviceState *dev = DEVICE(obj);
     BusState *bus;
 
+    trace_device_unparent(dev->id);
+
     if (dev->realized) {
         object_property_set_bool(obj, false, "realized", NULL);
     }
@@ -1089,6 +1093,7 @@ static void device_unparent(Object *obj)
         object_unparent(OBJECT(bus));
     }
     if (dev->parent_bus) {
+        trace_device_unparent_parent_bus(dev->id);
         bus_remove_child(dev->parent_bus, dev);
         object_unref(OBJECT(dev->parent_bus));
         dev->parent_bus = NULL;

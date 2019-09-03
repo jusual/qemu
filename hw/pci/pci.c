@@ -49,9 +49,9 @@
 #include "qapi/qapi-commands-misc.h"
 #include "qemu/cutils.h"
 
-//#define DEBUG_PCI
+#define DEBUG_PCI
 #ifdef DEBUG_PCI
-# define PCI_DPRINTF(format, ...)       printf(format, ## __VA_ARGS__)
+# define PCI_DPRINTF(dev, format, ...)       fprintf(stderr, "%s %s " format, __func__, (dev)->qdev.id, ## __VA_ARGS__)
 #else
 # define PCI_DPRINTF(format, ...)       do { } while (0)
 #endif
@@ -896,6 +896,8 @@ static void pci_config_free(PCIDevice *pci_dev)
 
 static void do_pci_unregister_device(PCIDevice *pci_dev)
 {
+    trace_pci_unregister_device(pci_dev->qdev.id, &pci_dev->bus_master_as);
+
     pci_get_bus(pci_dev)->devices[pci_dev->devfn] = NULL;
     pci_config_free(pci_dev);
 
@@ -1122,6 +1124,8 @@ static void pci_qdev_unrealize(DeviceState *dev, Error **errp)
 {
     PCIDevice *pci_dev = PCI_DEVICE(dev);
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(pci_dev);
+
+    PCI_DPRINTF(pci_dev, "\n");
 
     pci_unregister_io_regions(pci_dev);
     pci_del_option_rom(pci_dev);
@@ -1379,20 +1383,26 @@ static void pci_update_irq_disabled(PCIDevice *d, int was_irq_disabled)
 uint32_t pci_default_read_config(PCIDevice *d,
                                  uint32_t address, int len)
 {
-    uint32_t val = 0;
+    uint32_t val = 0, res;
 
     if (pci_is_express_downstream_port(d) &&
         ranges_overlap(address, len, d->exp.exp_cap + PCI_EXP_LNKSTA, 2)) {
         pcie_sync_bridge_lnk(d);
     }
     memcpy(&val, d->config + address, len);
-    return le32_to_cpu(val);
+    res = le32_to_cpu(val);
+
+    PCI_DPRINTF(d, "addr 0x%x val 0x%x len %d\n", address, res, len);
+
+    return res;
 }
 
 void pci_default_write_config(PCIDevice *d, uint32_t addr, uint32_t val_in, int l)
 {
     int i, was_irq_disabled = pci_irq_disabled(d);
     uint32_t val = val_in;
+
+    PCI_DPRINTF(d, "addr 0x%x val 0x%x len %d\n", addr, val_in, l);
 
     for (i = 0; i < l; val >>= 8, ++i) {
         uint8_t wmask = d->wmask[addr + i];
@@ -2080,6 +2090,8 @@ static void pci_qdev_realize(DeviceState *qdev, Error **errp)
     bool is_default_rom;
     uint16_t class_id;
 
+    PCI_DPRINTF(pci_dev, "\n");
+
     /* initialize cap_present for pci_is_express() and pci_config_size(),
      * Note that hybrid PCIs are not set automatically and need to manage
      * QEMU_PCI_CAP_EXPRESS manually */
@@ -2245,12 +2257,12 @@ static void pci_patch_ids(PCIDevice *pdev, uint8_t *ptr, int size)
     /* Only a valid rom will be patched. */
     rom_magic = pci_get_word(ptr);
     if (rom_magic != 0xaa55) {
-        PCI_DPRINTF("Bad ROM magic %04x\n", rom_magic);
+        PCI_DPRINTF(pdev, "Bad ROM magic %04x\n", rom_magic);
         return;
     }
     pcir_offset = pci_get_word(ptr + 0x18);
     if (pcir_offset + 8 >= size || memcmp(ptr + pcir_offset, "PCIR", 4)) {
-        PCI_DPRINTF("Bad PCIR offset 0x%x or signature\n", pcir_offset);
+        PCI_DPRINTF(pdev, "Bad PCIR offset 0x%x or signature\n", pcir_offset);
         return;
     }
 
@@ -2259,7 +2271,7 @@ static void pci_patch_ids(PCIDevice *pdev, uint8_t *ptr, int size)
     rom_vendor_id = pci_get_word(ptr + pcir_offset + 4);
     rom_device_id = pci_get_word(ptr + pcir_offset + 6);
 
-    PCI_DPRINTF("%s: ROM id %04x%04x / PCI id %04x%04x\n", pdev->romfile,
+    PCI_DPRINTF(pdev, "%s: ROM id %04x%04x / PCI id %04x%04x\n", pdev->romfile,
                 vendor_id, device_id, rom_vendor_id, rom_device_id);
 
     checksum = ptr[6];
@@ -2268,7 +2280,7 @@ static void pci_patch_ids(PCIDevice *pdev, uint8_t *ptr, int size)
         /* Patch vendor id and checksum (at offset 6 for etherboot roms). */
         checksum += (uint8_t)rom_vendor_id + (uint8_t)(rom_vendor_id >> 8);
         checksum -= (uint8_t)vendor_id + (uint8_t)(vendor_id >> 8);
-        PCI_DPRINTF("ROM checksum %02x / %02x\n", ptr[6], checksum);
+        PCI_DPRINTF(pdev, "ROM checksum %02x / %02x\n", ptr[6], checksum);
         ptr[6] = checksum;
         pci_set_word(ptr + pcir_offset + 4, vendor_id);
     }
@@ -2277,7 +2289,7 @@ static void pci_patch_ids(PCIDevice *pdev, uint8_t *ptr, int size)
         /* Patch device id and checksum (at offset 6 for etherboot roms). */
         checksum += (uint8_t)rom_device_id + (uint8_t)(rom_device_id >> 8);
         checksum -= (uint8_t)device_id + (uint8_t)(device_id >> 8);
-        PCI_DPRINTF("ROM checksum %02x / %02x\n", ptr[6], checksum);
+        PCI_DPRINTF(pdev, "ROM checksum %02x / %02x\n", ptr[6], checksum);
         ptr[6] = checksum;
         pci_set_word(ptr + pcir_offset + 6, device_id);
     }

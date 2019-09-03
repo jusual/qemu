@@ -56,14 +56,20 @@ memory_notdirty_write_access(uint64_t vaddr, uint64_t ram_addr, unsigned size) "
 memory_notdirty_set_dirty(uint64_t vaddr) "0x%" PRIx64
 
 # memory.c
+address_space_destroy(void *as, void *rcu) "as %p rcu %p"
+address_space_destroy_rcu_cb(void *as, void *rcu, void *mr, void *owner, int ref_mr, int ref_owner) "as %p rcu %p mr %p owner %p ref mr %d ref owner %d"
 memory_region_ops_read(int cpu_index, void *mr, uint64_t addr, uint64_t value, unsigned size) "cpu %d mr %p addr 0x%"PRIx64" value 0x%"PRIx64" size %u"
 memory_region_ops_write(int cpu_index, void *mr, uint64_t addr, uint64_t value, unsigned size) "cpu %d mr %p addr 0x%"PRIx64" value 0x%"PRIx64" size %u"
 memory_region_subpage_read(int cpu_index, void *mr, uint64_t offset, uint64_t value, unsigned size) "cpu %d mr %p offset 0x%"PRIx64" value 0x%"PRIx64" size %u"
 memory_region_subpage_write(int cpu_index, void *mr, uint64_t offset, uint64_t value, unsigned size) "cpu %d mr %p offset 0x%"PRIx64" value 0x%"PRIx64" size %u"
 memory_region_ram_device_read(int cpu_index, void *mr, uint64_t addr, uint64_t value, unsigned size) "cpu %d mr %p addr 0x%"PRIx64" value 0x%"PRIx64" size %u"
 memory_region_ram_device_write(int cpu_index, void *mr, uint64_t addr, uint64_t value, unsigned size) "cpu %d mr %p addr 0x%"PRIx64" value 0x%"PRIx64" size %u"
+memory_region_del_subregion(const char *mr, const char *smr, int pending) "mr %s subregion %s update_pending %d"
+memory_region_transaction_commit(unsigned depth) "transaction_depth %u"
+memory_region_update_pending(void) ""
+memory_region_ioeventfd_update_pending(void) ""
 flatview_new(void *view, void *root) "%p (root %p)"
-flatview_destroy(void *view, void *root) "%p (root %p)"
+flatview_destroy(void *view, int nr, void *root) "%p nr %d (root %p)"
 flatview_destroy_rcu(void *view, void *root) "%p (root %p)"
 
 # gdbstub.c

@@ -31,6 +31,7 @@
 #include "qemu/atomic.h"
 #include "qemu/thread.h"
 #include "qemu/main-loop.h"
+#include "trace.h"
 #if defined(CONFIG_MALLOC_TRIM)
 #include <malloc.h>
 #endif
@@ -280,6 +281,7 @@ static void *call_rcu_thread(void *opaque)
             }
 
             n--;
+            trace_call_rcu_thread(node, atomic_read(&rcu_call_count) + n);
             node->func(node);
         }
         qemu_mutex_unlock_iothread();

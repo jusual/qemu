@@ -9,6 +9,9 @@ qbus_reset(void *obj, const char *objtype) "obj=%p(%s)"
 qbus_reset_all(void *obj, const char *objtype) "obj=%p(%s)"
 qbus_reset_tree(void *obj, const char *objtype) "obj=%p(%s)"
 qdev_update_parent_bus(void *obj, const char *objtype, void *oldp, const char *oldptype, void *newp, const char *newptype) "obj=%p(%s) old_parent=%p(%s) new_parent=%p(%s)"
+device_unparent(const char *id) "%s"
+device_unparent_parent_bus(const char *id) "%s"
+device_finalize(const char *id) "%s"
 
 # resettable.c
 resettable_reset(void *obj, int cold) "obj=%p cold=%d"

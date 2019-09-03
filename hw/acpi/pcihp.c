@@ -219,6 +219,7 @@ void acpi_pcihp_reset(AcpiPciHpState *s)
 void acpi_pcihp_device_pre_plug_cb(HotplugHandler *hotplug_dev,
                                    DeviceState *dev, Error **errp)
 {
+
     /* Only hotplugged devices need the hotplug capability. */
     if (dev->hotplugged &&
         acpi_pcihp_get_bsel(pci_get_bus(PCI_DEVICE(dev))) < 0) {

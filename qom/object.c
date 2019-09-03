@@ -35,6 +35,8 @@
 
 #define MAX_INTERFACES 32
 
+Object *virtio_pci_mr_owner;
+
 typedef struct InterfaceImpl InterfaceImpl;
 typedef struct TypeImpl TypeImpl;
 
@@ -643,6 +645,8 @@ static void object_property_del_child(Object *obj, Object *child, Error **errp)
 
 void object_unparent(Object *obj)
 {
+    trace_object_unparent(obj);
+
     if (obj->parent) {
         object_property_del_child(obj->parent, obj, NULL);
     }
@@ -1112,6 +1116,12 @@ Object *object_ref(Object *obj)
     if (!obj) {
         return NULL;
     }
+    if (obj == virtio_pci_mr_owner) {
+        trace_object_ref(obj, obj->ref);
+    }
+    if (obj == virtio_pci_mr_owner) {
+        trace_object_ref(obj, obj->ref);
+    }
     atomic_inc(&obj->ref);
     return obj;
 }
@@ -1120,6 +1130,9 @@ void object_unref(Object *obj)
 {
     if (!obj) {
         return;
+    }
+    if (obj == virtio_pci_mr_owner) {
+        trace_object_unref(obj, obj->ref);
     }
     g_assert(obj->ref > 0);
 

@@ -1371,6 +1371,7 @@ static const AIOCBInfo blk_aio_em_aiocb_info = {
 
 static void blk_aio_complete(BlkAioEmAIOCB *acb)
 {
+    trace_blk_aio_complete(acb->rwco.blk);
     if (acb->has_returned) {
         acb->common.cb(acb->common.opaque, acb->rwco.ret);
         blk_dec_in_flight(acb->rwco.blk);

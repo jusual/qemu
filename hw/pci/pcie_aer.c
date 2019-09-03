@@ -31,7 +31,7 @@
 #include "hw/pci/pcie_regs.h"
 #include "qapi/error.h"
 
-//#define DEBUG_PCIE
+#define DEBUG_PCIE
 #ifdef DEBUG_PCIE
 # define PCIE_DPRINTF(fmt, ...)                                         \
     fprintf(stderr, "%s:%d " fmt, __func__, __LINE__, ## __VA_ARGS__)
@@ -718,6 +718,7 @@ void pcie_aer_write_config(PCIDevice *dev,
     uint32_t first_error = 1U << PCI_ERR_CAP_FEP(errcap);
     uint32_t uncorsta = pci_get_long(aer_cap + PCI_ERR_UNCOR_STATUS);
 
+    PCIE_DEV_PRINTF(dev, "addr %u val %u len %d\n", addr, val, len);
     /* uncorrectable error */
     if (!(uncorsta & first_error)) {
         /* the bit that corresponds to the first error is cleared */

@@ -280,7 +280,7 @@ static void flatview_destroy(FlatView *view)
 {
     int i;
 
-    trace_flatview_destroy(view, view->root);
+    trace_flatview_destroy(view, view->nr, view->root);
     if (view->dispatch) {
         address_space_dispatch_free(view->dispatch);
     }
@@ -1067,11 +1067,13 @@ void memory_region_transaction_commit(void)
     assert(memory_region_transaction_depth);
     assert(qemu_mutex_iothread_locked());
 
+    trace_memory_region_transaction_commit(memory_region_transaction_depth);
+
     --memory_region_transaction_depth;
     if (!memory_region_transaction_depth) {
         if (memory_region_update_pending) {
             flatviews_reset();
-
+            trace_memory_region_update_pending();
             MEMORY_LISTENER_CALL_GLOBAL(begin, Forward);
 
             QTAILQ_FOREACH(as, &address_spaces, address_spaces_link) {
@@ -1082,6 +1084,7 @@ void memory_region_transaction_commit(void)
             ioeventfd_update_pending = false;
             MEMORY_LISTENER_CALL_GLOBAL(commit, Forward);
         } else if (ioeventfd_update_pending) {
+            trace_memory_region_ioeventfd_update_pending();
             QTAILQ_FOREACH(as, &address_spaces, address_spaces_link) {
                 address_space_update_ioeventfds(as);
             }
@@ -2422,6 +2425,7 @@ void memory_region_del_subregion(MemoryRegion *mr,
     QTAILQ_REMOVE(&mr->subregions, subregion, subregions_link);
     memory_region_unref(subregion);
     memory_region_update_pending |= mr->enabled && subregion->enabled;
+    trace_memory_region_del_subregion(mr->name, subregion->name, memory_region_update_pending);
     memory_region_transaction_commit();
 }
 
@@ -2780,11 +2784,14 @@ void address_space_init(AddressSpace *as, MemoryRegion *root, const char *name)
 
 static void do_address_space_destroy(AddressSpace *as)
 {
+    MemoryRegion *mr = as->root;
+
     assert(QTAILQ_EMPTY(&as->listeners));
 
     flatview_unref(as->current_map);
     g_free(as->name);
     g_free(as->ioeventfds);
+    trace_address_space_destroy_rcu_cb(as, &as->rcu, mr, mr->owner, atomic_read(&mr->parent_obj.ref), atomic_read(&mr->owner->ref));
     memory_region_unref(as->root);
 }
 
@@ -2792,6 +2799,7 @@ void address_space_destroy(AddressSpace *as)
 {
     MemoryRegion *root = as->root;
 
+    trace_address_space_destroy(as, &as->rcu);
     /* Flush out anything from MemoryListeners listening in on this */
     memory_region_transaction_begin();
     as->root = NULL;

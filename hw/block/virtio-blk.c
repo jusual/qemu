@@ -76,8 +76,9 @@ static void virtio_blk_req_complete(VirtIOBlockReq *req, unsigned char status)
 {
     VirtIOBlock *s = req->dev;
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
+    BusState *qbus = qdev_get_parent_bus(DEVICE(vdev));
 
-    trace_virtio_blk_req_complete(vdev, req, status);
+    trace_virtio_blk_req_complete(vdev, req, status, qbus);
 
     stb_p(&req->in->status, status);
     virtqueue_push(req->vq, &req->elem, req->in_len);

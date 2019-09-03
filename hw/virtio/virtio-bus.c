@@ -30,11 +30,11 @@
 #include "hw/virtio/virtio.h"
 #include "exec/address-spaces.h"
 
-/* #define DEBUG_VIRTIO_BUS */
+#define DEBUG_VIRTIO_BUS
 
 #ifdef DEBUG_VIRTIO_BUS
 #define DPRINTF(fmt, ...) \
-do { printf("virtio_bus: " fmt , ## __VA_ARGS__); } while (0)
+do { fprintf(stderr, "virtio_bus: " fmt , ## __VA_ARGS__); } while (0)
 #else
 #define DPRINTF(fmt, ...) do { } while (0)
 #endif
@@ -103,7 +103,7 @@ void virtio_bus_device_unplugged(VirtIODevice *vdev)
     BusState *qbus = BUS(qdev_get_parent_bus(qdev));
     VirtioBusClass *klass = VIRTIO_BUS_GET_CLASS(qbus);
 
-    DPRINTF("%s: remove device.\n", qbus->name);
+    DPRINTF("%s: remove device.\n", vdev->name);
 
     if (vdev != NULL) {
         if (klass->device_unplugged != NULL) {

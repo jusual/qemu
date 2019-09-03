@@ -27,11 +27,11 @@
 #include "trace.h"
 
 /* debug PCI */
-//#define DEBUG_PCI
+#define DEBUG_PCI
 
 #ifdef DEBUG_PCI
 #define PCI_DPRINTF(fmt, ...) \
-do { printf("pci_host_data: " fmt , ## __VA_ARGS__); } while (0)
+do { fprintf(stderr, "pci_host_data: " fmt , ## __VA_ARGS__); } while (0)
 #else
 #define PCI_DPRINTF(fmt, ...)
 #endif
@@ -171,6 +171,7 @@ static uint64_t pci_host_data_read(void *opaque,
     PCIHostState *s = opaque;
 
     if (!(s->config_reg & (1U << 31))) {
+        PCI_DPRINTF("read addr " TARGET_FMT_plx " len %d quit\n", addr, len);
         return 0xffffffff;
     }
     return pci_data_read(s->bus, s->config_reg | (addr & 3), len);

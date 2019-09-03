@@ -213,6 +213,12 @@ static void balloon_stats_poll_cb(void *opaque)
 {
     VirtIOBalloon *s = opaque;
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
+    DeviceState *bus_dev = DEVICE(opaque)->parent_bus->parent;
+
+    if (bus_dev && bus_dev->pending_deleted_event) {
+        fprintf(stderr, "%s during unplug\n", __func__);
+        return;
+    }
 
     if (s->stats_vq_elem == NULL || !balloon_stats_supported(s)) {
         /* re-schedule */
@@ -777,6 +783,7 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
     VirtIOBalloon *s = VIRTIO_BALLOON(dev);
     int ret;
 
+    trace_virtio_balloon_device_realize(vdev->name);
     virtio_init(vdev, "virtio-balloon", VIRTIO_ID_BALLOON,
                 virtio_balloon_config_size(s));
 
@@ -823,6 +830,8 @@ static void virtio_balloon_device_unrealize(DeviceState *dev, Error **errp)
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOBalloon *s = VIRTIO_BALLOON(dev);
+
+    trace_virtio_balloon_device_unrealize(vdev->name);
 
     if (virtio_balloon_free_page_support(s)) {
         qemu_bh_delete(s->free_page_bh);

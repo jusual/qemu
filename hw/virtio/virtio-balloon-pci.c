@@ -19,6 +19,7 @@
 #include "hw/virtio/virtio-balloon.h"
 #include "qapi/error.h"
 #include "qemu/module.h"
+#include "trace.c"
 
 typedef struct VirtIOBalloonPCI VirtIOBalloonPCI;
 
@@ -42,6 +43,8 @@ static void virtio_balloon_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
 {
     VirtIOBalloonPCI *dev = VIRTIO_BALLOON_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
+
+    trace_virtio_balloon_pci_realize(vpci_dev->pci_dev.name);
 
     if (vpci_dev->class_code != PCI_CLASS_OTHERS &&
         vpci_dev->class_code != PCI_CLASS_MEMORY_RAM) { /* qemu < 1.1 */

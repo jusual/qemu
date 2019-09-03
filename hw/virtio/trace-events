@@ -29,7 +29,15 @@ virtqueue_pop(void *vq, void *elem, unsigned int in_num, unsigned int out_num) "
 virtio_queue_notify(void *vdev, int n, void *vq) "vdev %p n %d vq %p"
 virtio_notify_irqfd(void *vdev, void *vq) "vdev %p vq %p"
 virtio_notify(void *vdev, void *vq) "vdev %p vq %p"
+virtio_notify_vector(void *vdev) "vdev %p"
 virtio_set_status(void *vdev, uint8_t val) "vdev %p val %u"
+
+# virtio_pci.c
+virtio_pci_notify(const char *id) "id %s"
+virtio_pci_notify_read(const char *vdev, uint64_t addr, unsigned size) "vdev %s addr %lu size %u"
+virtio_pci_notify_write(const char *vdev, uint64_t addr, unsigned size) "vdev %s addr %lu size %u"
+virtio_pci_device_read(const char *vdev, uint64_t addr, unsigned size) "vdev %s addr %lu size %u"
+virtio_pci_device_write(const char *vdev, uint64_t addr, unsigned size) "vdev %s addr %lu size %u"
 
 # virtio-rng.c
 virtio_rng_guest_not_ready(void *rng) "rng %p: guest not ready"
@@ -46,6 +54,11 @@ virtio_balloon_handle_output(const char *name, uint64_t gpa) "section name: %s g
 virtio_balloon_get_config(uint32_t num_pages, uint32_t actual) "num_pages: %d actual: %d"
 virtio_balloon_set_config(uint32_t actual, uint32_t oldactual) "actual: %d oldactual: %d"
 virtio_balloon_to_target(uint64_t target, uint32_t num_pages) "balloon target: 0x%"PRIx64" num_pages: %d"
+virtio_balloon_device_unrealize(const char *id) "%s"
+virtio_balloon_device_realize(const char *id) "%s"
+
+#virtio-balloon-pci.c
+virtio_balloon_pci_realize(const char *name) "%s"
 
 # virtio-mmio.c
 virtio_mmio_read(uint64_t offset) "virtio_mmio_read offset 0x%" PRIx64

@@ -29,7 +29,7 @@
 #include "hw/pci/pcie_port.h"
 #include "qemu/range.h"
 
-//#define DEBUG_PCIE
+#define DEBUG_PCIE
 #ifdef DEBUG_PCIE
 # define PCIE_DPRINTF(fmt, ...)                                         \
     fprintf(stderr, "%s:%d " fmt, __func__, __LINE__, ## __VA_ARGS__)
@@ -335,6 +335,8 @@ static void hotplug_event_update_event_status(PCIDevice *dev)
     uint16_t sltctl = pci_get_word(exp_cap + PCI_EXP_SLTCTL);
     uint16_t sltsta = pci_get_word(exp_cap + PCI_EXP_SLTSTA);
 
+    PCIE_DEV_PRINTF(dev, "sltsta 0x%x sltctl 0x%x\n", sltsta, sltctl);
+
     dev->exp.hpev_notified = (sltctl & PCI_EXP_SLTCTL_HPIE) &&
         (sltsta & sltctl & PCI_EXP_HP_EV_SUPPORTED);
 }
@@ -345,7 +347,8 @@ static void hotplug_event_notify(PCIDevice *dev)
 
     hotplug_event_update_event_status(dev);
 
-    if (prev == dev->exp.hpev_notified) {
+    if (!dev->exp.hpev_notified) {
+        PCIE_DEV_PRINTF(dev, "event was not send prev %d notified %d\n", prev, dev->exp.hpev_notified);
         return;
     }
 
@@ -381,11 +384,24 @@ static void hotplug_event_clear(PCIDevice *dev)
  */
 static void pcie_cap_slot_event(PCIDevice *dev, PCIExpressHotPlugEvent event)
 {
+    if (event & PCI_EXP_HP_EV_ABP) {
+        PCIE_DEV_PRINTF(dev, "attention button pressed\n");
+    }
+    if (event & PCI_EXP_HP_EV_PDC) {
+        PCIE_DEV_PRINTF(dev, "presence detect change\n");
+    }
+    if (event & PCI_EXP_HP_EV_CCI) {
+        PCIE_DEV_PRINTF(dev, "command completed\n");
+    }
+
     /* Minor optimization: if nothing changed - no event is needed. */
     if (pci_word_test_and_set_mask(dev->config + dev->exp.exp_cap +
                                    PCI_EXP_SLTSTA, event) == event) {
+        PCIE_DEV_PRINTF(dev, "nothing changed - no event is needed\n");
         return;
     }
+
+    PCIE_DEV_PRINTF(dev, "Notifying\n");
     hotplug_event_notify(dev);
 }
 
@@ -620,6 +636,9 @@ void pcie_cap_slot_write_config(PCIDevice *dev,
     uint16_t sltsta = pci_get_word(exp_cap + PCI_EXP_SLTSTA);
 
     if (ranges_overlap(addr, len, pos + PCI_EXP_SLTSTA, 2)) {
+        PCIE_DEV_PRINTF(dev, "to sltsta: old_slt_ctl 0x%x old_slt_sta 0x%x addr 0x%x val 0x%x len %d\n",
+                              old_slt_ctl, old_slt_sta, addr - pos, val, len);
+
         /*
          * Guests tend to clears all bits during init.
          * If they clear bits that weren't set this is racy and will lose events:
@@ -646,7 +665,10 @@ void pcie_cap_slot_write_config(PCIDevice *dev,
         return;
     }
 
-    if (pci_word_test_and_clear_mask(exp_cap + PCI_EXP_SLTCTL,
+   PCIE_DEV_PRINTF(dev, "to sltctl: old_slt_ctl 0x%x old_slt_sta 0x%x addr 0x%x val 0x%x len %d\n",
+                         old_slt_ctl, old_slt_sta, addr - pos, val, len);
+
+   if (pci_word_test_and_clear_mask(exp_cap + PCI_EXP_SLTCTL,
                                      PCI_EXP_SLTCTL_EIC)) {
         sltsta ^= PCI_EXP_SLTSTA_EIS; /* toggle PCI_EXP_SLTSTA_EIS bit */
         pci_set_word(exp_cap + PCI_EXP_SLTSTA, sltsta);
@@ -681,6 +703,8 @@ void pcie_cap_slot_write_config(PCIDevice *dev,
                                        PCI_EXP_SLTSTA_PDC);
     }
 
+    PCIE_DEV_PRINTF(dev, "Notifying\n");
+
     hotplug_event_notify(dev);
 
     /* 
@@ -699,6 +723,7 @@ void pcie_cap_slot_write_config(PCIDevice *dev,
      * lock.  However in our case, command is completed instantaneously above,
      * so send a command completion event right now.
      */
+    PCIE_DEV_PRINTF(dev, "sending command complete\n");
     pcie_cap_slot_event(dev, PCI_EXP_HP_EV_CCI);
 }
 
@@ -891,6 +916,8 @@ void pcie_sync_bridge_lnk(PCIDevice *bridge_dev)
     PCIDevice *target = bus->devices[0];
     uint8_t *exp_cap = bridge_dev->config + bridge_dev->exp.exp_cap;
     uint16_t lnksta, lnkcap = pci_get_word(exp_cap + PCI_EXP_LNKCAP);
+
+    PCIE_DEV_PRINTF(bridge_dev, "");
 
     if (!target || !target->exp.exp_cap) {
         lnksta = lnkcap;

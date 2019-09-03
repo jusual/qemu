@@ -148,6 +148,7 @@ static void virtio_virtqueue_reset_region_cache(struct VirtQueue *vq)
 {
     VRingMemoryRegionCaches *caches;
 
+    fprintf(stderr, "%s vq %p\n", __func__, vq);
     caches = atomic_read(&vq->vring.caches);
     atomic_rcu_set(&vq->vring.caches, NULL);
     if (caches) {
@@ -165,8 +166,10 @@ static void virtio_init_region_cache(VirtIODevice *vdev, int n)
     bool packed;
 
 
+    fprintf(stderr, "%s num %d vq %p\n", __func__, n, vq);
     addr = vq->vring.desc;
     if (!addr) {
+        fprintf(stderr, "%s out_no_cache\n", __func__);
         goto out_no_cache;
     }
     new = g_new0(VRingMemoryRegionCaches, 1);
@@ -176,6 +179,7 @@ static void virtio_init_region_cache(VirtIODevice *vdev, int n)
     len = address_space_cache_init(&new->desc, vdev->dma_as,
                                    addr, size, packed);
     if (len < size) {
+        fprintf(stderr, "%s desc map error\n", __func__);
         virtio_error(vdev, "Cannot map desc");
         goto err_desc;
     }
@@ -184,6 +188,7 @@ static void virtio_init_region_cache(VirtIODevice *vdev, int n)
     len = address_space_cache_init(&new->used, vdev->dma_as,
                                    vq->vring.used, size, true);
     if (len < size) {
+        fprintf(stderr, "%s used map error\n", __func__);
         virtio_error(vdev, "Cannot map used");
         goto err_used;
     }
@@ -192,6 +197,7 @@ static void virtio_init_region_cache(VirtIODevice *vdev, int n)
     len = address_space_cache_init(&new->avail, vdev->dma_as,
                                    vq->vring.avail, size, false);
     if (len < size) {
+        fprintf(stderr, "%s avail map error\n", __func__);
         virtio_error(vdev, "Cannot map avail");
         goto err_avail;
     }
@@ -1899,7 +1905,15 @@ void qemu_put_virtqueue_element(VirtIODevice *vdev, QEMUFile *f,
 static void virtio_notify_vector(VirtIODevice *vdev, uint16_t vector)
 {
     BusState *qbus = qdev_get_parent_bus(DEVICE(vdev));
-    VirtioBusClass *k = VIRTIO_BUS_GET_CLASS(qbus);
+    VirtioBusClass *k;
+
+    trace_virtio_notify_vector(vdev);
+
+    if (!qbus) {
+        fprintf(stderr, "HIT virtio_notify_vector crash\n");
+    }
+
+    k = VIRTIO_BUS_GET_CLASS(qbus);
 
     if (virtio_device_disabled(vdev)) {
         return;
@@ -2433,6 +2447,7 @@ void virtio_del_queue(VirtIODevice *vdev, int n)
         abort();
     }
 
+    fprintf(stderr, "%s num %d vq %p\n", __func__, n, &vdev->vq[n]);
     virtio_delete_queue(&vdev->vq[n]);
 }
 
@@ -3594,6 +3609,7 @@ static void virtio_memory_listener_commit(MemoryListener *listener)
     VirtIODevice *vdev = container_of(listener, VirtIODevice, listener);
     int i;
 
+    fprintf(stderr, "%s\n", __func__);
     for (i = 0; i < VIRTIO_QUEUE_MAX; i++) {
         if (vdev->vq[i].vring.num == 0) {
             break;
@@ -3608,6 +3624,7 @@ static void virtio_device_realize(DeviceState *dev, Error **errp)
     VirtioDeviceClass *vdc = VIRTIO_DEVICE_GET_CLASS(dev);
     Error *err = NULL;
 
+    fprintf(stderr, "%s vdev %s\n", __func__, vdev->name);
     /* Devices should either use vmsd or the load/save methods */
     assert(!vdc->vmsd || !vdc->load);
 
@@ -3635,6 +3652,8 @@ static void virtio_device_unrealize(DeviceState *dev, Error **errp)
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtioDeviceClass *vdc = VIRTIO_DEVICE_GET_CLASS(dev);
     Error *err = NULL;
+
+    fprintf(stderr, "%s vdev %s\n", __func__, vdev->name);
 
     virtio_bus_device_unplugged(vdev);
 
