@@ -539,10 +539,7 @@ LuringState *luring_init(Error **errp)
 
     trace_luring_init_state(s, sizeof(*s));
 
-    rc = io_uring_queue_init(MAX_ENTRIES, ring, IORING_SETUP_SQPOLL);
-    if (rc == -EOPNOTSUPP) {
-            rc = io_uring_queue_init(MAX_ENTRIES, ring, 0);
-    }
+    rc = io_uring_queue_init(MAX_ENTRIES, ring, 0);
     if (rc < 0) {
         error_setg_errno(errp, errno, "failed to init linux io_uring ring");
         g_free(s);
