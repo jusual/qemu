@@ -46,16 +46,10 @@ typedef struct LuringQueue {
     QSIMPLEQ_HEAD(, LuringAIOCB) submit_queue;
 } LuringQueue;
 
-typedef struct LuringFd {
-    int *fd_array;
-    int size;
-} LuringFd;
-
 typedef struct LuringState {
     AioContext *aio_context;
 
     struct io_uring ring;
-    LuringFd fd_reg;
 
     /* io queue for submit at batch.  Protected by AioContext lock. */
     LuringQueue io_q;
@@ -304,97 +298,6 @@ static void ioq_init(LuringQueue *io_q)
     io_q->blocked = false;
 }
 
-/**
- * luring_fd_register:
- *
- * Register file descriptors, see luring_fd_lookup
- */
-static int luring_fd_register(struct io_uring *ring, LuringFd *fd_reg, int fd)
-{
-//    int ret, 
-    int nr;
-    nr = fd_reg->size;
-
-    /* If adding new, API requires older registrations to be removed */
-//    if (nr) {
-        /*
-         * See linux b19062a56726, register needs the ring mutex, any
-         * submission in progress will complete before unregistering begins
-         * and new ones will have to wait.
-         */
-//        ret = io_uring_unregister_files(ring);
-//        if (ret < 0) {
-//            return ret;
-//        }
-//    }
-
-    fd_reg->fd_array = g_realloc_n(fd_reg->fd_array, nr + 1, sizeof(int));
-    fd_reg->fd_array[nr] = fd;
-    fd_reg->size = nr + 1;
-
-    trace_luring_fd_register(fd, nr);
-
-    if (nr) {
-        return io_uring_register_files_update(ring, nr, &fd, 1);
-    }
-
-    return io_uring_register_files(ring, fd_reg->fd_array, nr + 1);
-}
-/**
- * luring_fd_unregister:
- *
- * Unregisters file descriptors, TODO: error handling
- */
-static void luring_fd_unregister(LuringState *s)
-{
-        io_uring_unregister_files(&s->ring);
-        g_free(s->fd_reg.fd_array);
-        s->fd_reg.fd_array = NULL;
-        s->fd_reg.size = 0;
-}
-
-/**
- * luring_fd_lookup:
- *
- * Used to lookup fd index in registered array at submission time
- * If the lookup table has not been created or the fd is not in the table,
- * the fd is registered.
- *
- * If registration errors, the hash is cleared and the fd used directly
- *
- * Unregistering is done at luring_detach_aio_context
- */
-static int luring_fd_lookup(LuringState *s, int fd)
-{
-    int ret, i = -1;
-
-    for (i = 0; i < s->fd_reg.size; i++) {
-        if (fd == s->fd_reg.fd_array[i]) {
-            break;
-        }
-    }
-
-    if (!s->fd_reg.size || i == s->fd_reg.size) {
-        ret = luring_fd_register(&s->ring, &s->fd_reg, fd);
-
-        if (ret < 0) {
-            if (ret == -ENOMEM || ret == -EMFILE ||
-                ret == -ENXIO) {
-                return ret;
-            } else {
-                /* Should not reach here */
-                g_free(s->fd_reg.fd_array);
-                s->fd_reg.size = 0;
-                return ret;
-            }
-        }
-        /* Definitely have size > 0 and fd in array */
-        return luring_fd_lookup(s, fd);
-    }
-
-    return i;
-}
-
 void luring_io_plug(BlockDriverState *bs, LuringState *s)
 {
     trace_luring_io_plug(s);
@@ -426,13 +329,8 @@ void luring_io_unplug(BlockDriverState *bs, LuringState *s)
 static int luring_do_submit(int fd, LuringAIOCB *luringcb, LuringState *s,
                             uint64_t offset, int type)
 {
-    int ret, fd_index;
+    int ret;
     struct io_uring_sqe *sqes = &luringcb->sqeq;
-
-    fd_index = luring_fd_lookup(s, fd);
-    if (fd_index >= 0) {
-        fd = fd_index;
-    }
 
     switch (type) {
     case QEMU_AIO_WRITE:
@@ -451,11 +349,7 @@ static int luring_do_submit(int fd, LuringAIOCB *luringcb, LuringState *s,
                         __func__, type);
         abort();
     }
-
     io_uring_sqe_set_data(sqes, luringcb);
-    if (fd_index >= 0) {
-        io_uring_sqe_set_flags(sqes, IOSQE_FIXED_FILE);
-    }
 
     QSIMPLEQ_INSERT_TAIL(&s->io_q.submit_queue, luringcb, next);
     s->io_q.in_queue++;
@@ -481,7 +375,6 @@ int coroutine_fn luring_co_submit(BlockDriverState *bs, LuringState *s, int fd,
         .qiov       = qiov,
         .is_read    = (type == QEMU_AIO_READ),
     };
-
     trace_luring_co_submit(bs, s, &luringcb, fd, offset, qiov ? qiov->size : 0,
                            type);
     ret = luring_do_submit(fd, &luringcb, s, offset, type);
@@ -498,7 +391,6 @@ int coroutine_fn luring_co_submit(BlockDriverState *bs, LuringState *s, int fd,
 
 void luring_detach_aio_context(LuringState *s, AioContext *old_context)
 {
-    luring_fd_unregister(s);
     aio_set_fd_handler(old_context, s->ring.ring_fd, false, NULL, NULL, NULL,
                        s);
     qemu_bh_delete(s->completion_bh);
