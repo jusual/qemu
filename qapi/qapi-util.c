@@ -26,8 +26,6 @@ int qapi_enum_parse(const QEnumLookup *lookup, const char *buf,
 {
     int i;
 
-    fprintf(stderr, "qapi_enum_parse %s\n", buf ? buf : lookup->array[def]);
-
     if (!buf) {
         return def;
     }
