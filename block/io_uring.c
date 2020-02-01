@@ -131,7 +131,6 @@ static void luring_resubmit_short_read(LuringState *s, LuringAIOCB *luringcb,
  */
 static void luring_process_completions(LuringState *s)
 {
-    fprintf(stderr, "%s\n", __func__);
     struct io_uring_cqe *cqes;
     int total_bytes;
     /*
@@ -198,7 +197,6 @@ static void luring_process_completions(LuringState *s)
             }
         }
 end:
-        fprintf(stderr, "%s: ret=%d\n", __func__, ret);
         luringcb->ret = ret;
         qemu_iovec_destroy(&luringcb->resubmit_qiov);
 
@@ -261,9 +259,6 @@ static int ioq_submit(LuringState *s)
 
 static void luring_process_completions_and_submit(LuringState *s)
 {
-    fprintf(stderr, "%s\n", __func__);
-    fprintf(stderr, "Process completion: %ld %d\n", s->ring.cq.ring_sz, s->aio_context == NULL);
-
     aio_context_acquire(s->aio_context);
     luring_process_completions(s);
 
@@ -275,14 +270,12 @@ static void luring_process_completions_and_submit(LuringState *s)
 
 static void qemu_luring_completion_bh(void *opaque)
 {
-    fprintf(stderr, "%s\n", __func__);
     LuringState *s = opaque;
     luring_process_completions_and_submit(s);
 }
 
 static void qemu_luring_completion_cb(void *opaque)
 {
-    fprintf(stderr, "%s\n", __func__);
     LuringState *s = opaque;
     luring_process_completions_and_submit(s);
 }
@@ -303,7 +296,6 @@ static void ioq_init(LuringQueue *io_q)
  */
 static int luring_fd_register(struct io_uring *ring, LuringFd *fd_reg, int fd)
 {
-    fprintf(stderr, "%s\n", __func__);
     int ret, nr;
     nr = fd_reg->size;
 
@@ -339,7 +331,6 @@ static int luring_fd_register(struct io_uring *ring, LuringFd *fd_reg, int fd)
  */
 static void luring_fd_unregister(LuringState *s)
 {
-        fprintf(stderr, "%s\n", __func__);
         io_uring_unregister_files(&s->ring);
         g_free(s->fd_reg.fd_array);
         s->fd_reg.fd_array = NULL;
@@ -359,7 +350,6 @@ static void luring_fd_unregister(LuringState *s)
  */
 static int luring_fd_lookup(LuringState *s, int fd)
 {
-    fprintf(stderr, "%s\n", __func__);
     int ret, i = -1;
 
     for (i = 0; i < s->fd_reg.size; i++) {
@@ -393,13 +383,11 @@ static int luring_fd_lookup(LuringState *s, int fd)
 void luring_io_plug(BlockDriverState *bs, LuringState *s)
 {
     trace_luring_io_plug(s);
-    fprintf(stderr, "%s\n", __func__);
     s->io_q.plugged++;
 }
 
 void luring_io_unplug(BlockDriverState *bs, LuringState *s)
 {
-    fprintf(stderr, "%s\n", __func__);
     assert(s->io_q.plugged);
     trace_luring_io_unplug(s, s->io_q.blocked, s->io_q.plugged,
                            s->io_q.in_queue, s->io_q.in_flight);
@@ -425,7 +413,6 @@ static int luring_do_submit(int fd, LuringAIOCB *luringcb, LuringState *s,
 {
     int ret, fd_index;
     struct io_uring_sqe *sqes = &luringcb->sqeq;
-    fprintf(stderr, "%s\n", __func__);
 
     fd_index = luring_fd_lookup(s, fd);
     if (fd_index >= 0) {
@@ -472,7 +459,6 @@ static int luring_do_submit(int fd, LuringAIOCB *luringcb, LuringState *s,
 int coroutine_fn luring_co_submit(BlockDriverState *bs, LuringState *s, int fd,
                                   uint64_t offset, QEMUIOVector *qiov, int type)
 {
-    fprintf(stderr, "%s\n", __func__);
     int ret;
     LuringAIOCB luringcb = {
         .co         = qemu_coroutine_self(),
@@ -491,14 +477,12 @@ int coroutine_fn luring_co_submit(BlockDriverState *bs, LuringState *s, int fd,
 
     if (luringcb.ret == -EINPROGRESS) {
         qemu_coroutine_yield();
-        fprintf(stderr, "%s: return from yield\n", __func__);
     }
     return luringcb.ret;
 }
 
 void luring_detach_aio_context(LuringState *s, AioContext *old_context)
 {
-    fprintf(stderr, "%s\n", __func__);
     luring_fd_unregister(s);
     aio_set_fd_handler(old_context, s->ring.ring_fd, false, NULL, NULL, NULL,
                        s);
@@ -508,7 +492,6 @@ void luring_detach_aio_context(LuringState *s, AioContext *old_context)
 
 void luring_attach_aio_context(LuringState *s, AioContext *new_context)
 {
-    fprintf(stderr, "%s\n", __func__);
     s->aio_context = new_context;
     s->completion_bh = aio_bh_new(new_context, qemu_luring_completion_bh, s);
     aio_set_fd_handler(s->aio_context, s->ring.ring_fd, false,
@@ -517,8 +500,6 @@ void luring_attach_aio_context(LuringState *s, AioContext *new_context)
 
 LuringState *luring_init(Error **errp)
 {
-    fprintf(stderr, "%s\n", __func__);
-
     int rc;
     LuringState *s = g_new0(LuringState, 1);
     struct io_uring *ring = &s->ring;
@@ -534,7 +515,7 @@ LuringState *luring_init(Error **errp)
         g_free(s);
         return NULL;
     }
-    fprintf(stderr, "Max_events: %d\nRing sizes: sq - %ld cq - %ld\n", MAX_ENTRIES, ring->sq.ring_sz, ring->cq.ring_sz);
+
     ioq_init(&s->io_q);
     return s;
 
