@@ -616,6 +616,7 @@ static int raw_open_common(BlockDriverState *bs, QDict *options,
     if (s->use_linux_io_uring) {
         if (!aio_setup_linux_io_uring(bdrv_get_aio_context(bs), errp)) {
             error_prepend(errp, "Unable to use io_uring: ");
+            ret = -EINVAL;
             goto fail;
         }
     }
