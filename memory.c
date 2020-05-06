@@ -171,6 +171,18 @@ struct MemoryRegionIoeventfd {
     EventNotifier *e;
 };
 
+bool memory_access_is_direct(MemoryRegion *mr, bool is_write)
+{
+    trace_memory_access_is_direct(mr->name, is_write);
+    if (is_write) {
+        return memory_region_is_ram(mr) && !mr->readonly &&
+               !mr->rom_device && !memory_region_is_ram_device(mr);
+    } else {
+        return (memory_region_is_ram(mr) && !memory_region_is_ram_device(mr)) ||
+               memory_region_is_romd(mr);
+    }
+}
+
 static bool memory_region_ioeventfd_before(MemoryRegionIoeventfd *a,
                                            MemoryRegionIoeventfd *b)
 {
@@ -571,7 +583,8 @@ static void render_memory_region(FlatView *view,
                                  Int128 base,
                                  AddrRange clip,
                                  bool readonly,
-                                 bool nonvolatile)
+                                 bool nonvolatile,
+                                 bool allones)
 {
     MemoryRegion *subregion;
     unsigned i;
@@ -586,9 +599,9 @@ static void render_memory_region(FlatView *view,
     }
 
     int128_addto(&base, int128_make64(mr->addr));
-    readonly |= mr->readonly;
+    allones |= mr->allones;
+    readonly = allones ? mr->readonly : (readonly | mr->readonly);
     nonvolatile |= mr->nonvolatile;
-
     tmp = addrrange_make(base, mr->size);
 
     if (!addrrange_intersects(tmp, clip)) {
@@ -601,14 +614,14 @@ static void render_memory_region(FlatView *view,
         int128_subfrom(&base, int128_make64(mr->alias->addr));
         int128_subfrom(&base, int128_make64(mr->alias_offset));
         render_memory_region(view, mr->alias, base, clip,
-                             readonly, nonvolatile);
+                             readonly, nonvolatile, allones);
         return;
     }
 
     /* Render subregions in priority order. */
     QTAILQ_FOREACH(subregion, &mr->subregions, subregions_link) {
         render_memory_region(view, subregion, base, clip,
-                             readonly, nonvolatile);
+                             readonly, nonvolatile, allones);
     }
 
     if (!mr->terminates) {
@@ -710,7 +723,7 @@ static FlatView *generate_memory_topology(MemoryRegion *mr)
     if (mr) {
         render_memory_region(view, mr, int128_zero(),
                              addrrange_make(int128_zero(), int128_2_64()),
-                             false, false);
+                             false, false, false);
     }
     flatview_simplify(view);
 
@@ -1488,6 +1501,18 @@ MemTxResult memory_region_dispatch_write(MemoryRegion *mr,
     }
 }
 
+void memory_region_init_allones(MemoryRegion *mr,
+                                Object *owner,
+                                const char *name,
+                                uint64_t size)
+{
+    memory_region_init(mr, owner, name, size);
+    mr->terminates = true;
+    mr->readonly = true;
+    mr->allones = true;
+    mr->romd_mode = true;
+}
+
 void memory_region_init_io(MemoryRegion *mr,
                            Object *owner,
                            const MemoryRegionOps *ops,
@@ -1664,6 +1689,15 @@ void memory_region_init_rom_nomigrate(MemoryRegion *mr,
     mr->readonly = true;
 }
 
+void memory_region_init_rom_ptr(MemoryRegion *mr,
+                                      struct Object *owner,
+                                      const char *name,
+                                      uint64_t size,
+                                      void *ptr)
+{
+    memory_region_init_ram_ptr(mr, owner, name, size, ptr);
+    mr->readonly = true;
+}
 void memory_region_init_rom_device_nomigrate(MemoryRegion *mr,
                                              Object *owner,
                                              const MemoryRegionOps *ops,

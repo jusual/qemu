@@ -29,6 +29,7 @@
 #include "hw/pci/pci_bridge.h"
 #include "hw/pci/pci_bus.h"
 #include "hw/pci/pci_host.h"
+#include "hw/pci/pcie_host.h"
 #include "hw/qdev-properties.h"
 #include "migration/qemu-file-types.h"
 #include "migration/vmstate.h"
@@ -51,7 +52,7 @@
 
 //#define DEBUG_PCI
 #ifdef DEBUG_PCI
-# define PCI_DPRINTF(format, ...)       printf(format, ## __VA_ARGS__)
+# define PCI_DPRINTF(format, ...)       fprintf(stderr, format, ## __VA_ARGS__)
 #else
 # define PCI_DPRINTF(format, ...)       do { } while (0)
 #endif
@@ -904,6 +905,14 @@ static void do_pci_unregister_device(PCIDevice *pci_dev)
                                     &pci_dev->bus_master_enable_region);
     }
     address_space_destroy(&pci_dev->bus_master_as);
+
+    if (pci_is_express(pci_dev)) {
+        PCIBus *rootbus = pci_device_root_bus(pci_dev);
+        PCIExpressHost *host = PCIE_HOST_BRIDGE(rootbus->qbus.parent);
+
+        memory_region_del_subregion(&host->mmio, &pci_dev->pcie_cfg);
+    }
+
 }
 
 /* Extract PCIReqIDCache into BDF format */
@@ -991,6 +1000,48 @@ static bool pci_bus_devfn_reserved(PCIBus *bus, int devfn)
     return bus->slot_reserved_mask & (1UL << PCI_SLOT(devfn));
 }
 
+static void pcie_cfg_write(void *opaque, hwaddr addr,
+                                  uint64_t val, unsigned len)
+{
+    PCIDevice* pci_dev = PCI_DEVICE(opaque);
+
+    if (addr > pci_config_size(pci_dev)) {
+        trace_pcie_cfg_write_outside(pci_dev->name, addr, val, len);
+        return;
+    }
+
+    trace_pcie_cfg_write(pci_dev->name, addr, val, len);
+    pci_dev->config_write(pci_dev, addr, val, len);
+}
+
+static uint64_t pcie_cfg_read(void *opaque, hwaddr addr, unsigned len)
+{
+    PCIDevice* pci_dev = PCI_DEVICE(opaque);
+    uint64_t val;
+
+    if (addr > pci_config_size(pci_dev)) {
+        trace_pcie_cfg_read_outside(pci_dev->name, addr, len);
+        return ~0x0;
+    }
+
+    val = pci_dev->config_read(pci_dev, addr, len);
+    trace_pcie_cfg_read(pci_dev->name, addr, val, len);
+    return val;
+}
+
+static const MemoryRegionOps pcie_cfg_ops = {
+    .read = pcie_cfg_read,
+    .write = pcie_cfg_write,
+    .endianness = DEVICE_LITTLE_ENDIAN,
+    .valid = {
+         .min_access_size = 4,
+         .max_access_size = 8,
+     },
+    .impl = {
+         .max_access_size = 4,
+     },
+};
+
 /* -1 for devfn means auto assign */
 static PCIDevice *do_pci_register_device(PCIDevice *pci_dev,
                                          const char *name, int devfn,
@@ -1060,6 +1111,29 @@ static PCIDevice *do_pci_register_device(PCIDevice *pci_dev,
     pci_dev->irq_state = 0;
     pci_config_alloc(pci_dev);
 
+
+    //map devices after knowing secondary bus number
+    PCIBus *rootbus = pci_device_root_bus(pci_dev);
+    if (object_dynamic_cast(OBJECT(rootbus->qbus.parent), TYPE_PCIE_HOST_BRIDGE)) {
+        char *cfg_name = g_strdup_printf("%s pcie-cfg", name);
+
+        memory_region_init_io(&pci_dev->pcie_cfg,
+                              OBJECT(pci_dev),
+                              &pcie_cfg_ops,
+                              pci_dev,
+                              cfg_name,
+                              PCIE_CONFIG_SPACE_SIZE); //pci_config_size(pci_dev));
+        if (pci_bus_is_root(bus)) {
+            uint32_t mmio_addr = (pci_dev->devfn << PCIE_MMCFG_DEVFN_BIT);
+            PCIExpressHost *host = PCIE_HOST_BRIDGE(rootbus->qbus.parent);
+
+            memory_region_add_subregion(&host->mmio,
+                                        mmio_addr,
+                                        &pci_dev->pcie_cfg);
+        }
+        g_free(cfg_name);
+    }
+
     pci_config_set_vendor_id(pci_dev->config, pc->vendor_id);
     pci_config_set_device_id(pci_dev->config, pc->device_id);
     pci_config_set_revision(pci_dev->config, pc->revision);
@@ -1092,6 +1166,8 @@ static PCIDevice *do_pci_register_device(PCIDevice *pci_dev,
         return NULL;
     }
 
+
+    //set io mrs for config space
     if (!config_read)
         config_read = pci_default_read_config;
     if (!config_write)
@@ -1413,7 +1489,18 @@ void pci_default_write_config(PCIDevice *d, uint32_t addr, uint32_t val_in, int 
                                   pci_get_word(d->config + PCI_COMMAND)
                                     & PCI_COMMAND_MASTER);
     }
+/*
+    PCIBus *rootbus = pci_device_root_bus(d);
+    if (object_dynamic_cast(OBJECT(rootbus->qbus.parent), TYPE_PCIE_HOST_BRIDGE) &&
+        range_overlap(addr, l, PCI_SECONDARY_BUS, 2)) {
+        uint8_t bus_num = pci_dev_bus_num(d);
+        uint32_t mmio_addr = (bus_num << PCIE_MMCFG_BUS_BIT) |
+                             (pci_dev->devfn << PCIE_MMCFG_DEVFN_BIT);
+        PCIExpressHost *host = PCIE_HOST_BRIDGE(rootbus->qbus.parent);
 
+        pcie_bus_map_children(host, d, );
+    }
+*/
     msi_write_config(d, addr, val_in, l);
     msix_write_config(d, addr, val_in, l);
 }
@@ -1625,7 +1712,7 @@ void pci_for_each_device_reverse(PCIBus *bus, int bus_num,
     }
 }
 
-static void pci_for_each_device_under_bus(PCIBus *bus,
+void pci_for_each_device_under_bus(PCIBus *bus,
                                           void (*fn)(PCIBus *b, PCIDevice *d,
                                                      void *opaque),
                                           void *opaque)

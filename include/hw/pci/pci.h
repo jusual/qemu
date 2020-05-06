@@ -271,6 +271,7 @@ struct PCIDevice {
     /* PCI config space */
     uint8_t *config;
 
+    MemoryRegion pcie_cfg;
     /* Used to enable config checks on load. Note that writable bits are
      * never checked even if set in cmask. */
     uint8_t *cmask;
@@ -455,6 +456,10 @@ static inline int pci_dev_bus_num(const PCIDevice *dev)
 }
 
 int pci_bus_numa_node(PCIBus *bus);
+void pci_for_each_device_under_bus(PCIBus *bus,
+                                   void (*fn)(PCIBus *b, PCIDevice *d,
+                                              void *opaque),
+                                   void *opaque);
 void pci_for_each_device(PCIBus *bus, int bus_num,
                          void (*fn)(PCIBus *bus, PCIDevice *d, void *opaque),
                          void *opaque);

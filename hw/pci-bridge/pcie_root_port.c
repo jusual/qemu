@@ -15,8 +15,11 @@
 #include "qemu/osdep.h"
 #include "qapi/error.h"
 #include "qemu/module.h"
+#include "qemu/range.h"
+#include "hw/pci/pci.h"
 #include "hw/pci/pcie_port.h"
 #include "hw/qdev-properties.h"
+#include "trace.h"
 
 static void rp_aer_vector_update(PCIDevice *d)
 {
@@ -34,9 +37,20 @@ static void rp_write_config(PCIDevice *d, uint32_t address,
         pci_get_long(d->config + d->exp.aer_cap + PCI_ERR_ROOT_COMMAND);
     uint16_t slt_ctl, slt_sta;
 
+    trace_rp_write_config(d->name, address, val, len, d->exp.exp_cap);
+
     pcie_cap_slot_get(d, &slt_ctl, &slt_sta);
 
     pci_bridge_write_config(d, address, val, len);
+
+    if (range_covers_byte(address, len, PCI_SECONDARY_BUS)) {
+        PCIBus *bus = pci_bridge_get_sec_bus(PCI_BRIDGE(d));
+
+        if (pci_bus_num(bus) > 0 && pci_bus_num(bus) < 0xff) {
+            pci_for_each_device_under_bus(bus, pcie_dev_map_mmio_cfg, NULL);
+        }
+    }
+
     rp_aer_vector_update(d);
     pcie_cap_slot_write_config(d, slt_ctl, slt_sta, address, val, len);
     pcie_aer_write_config(d, address, val, len);

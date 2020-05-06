@@ -1,0 +1,4 @@
+# See docs/devel/tracing.txt for syntax documentation.
+
+# pcie_root_port.c
+rp_write_config(const char *name, uint32_t addr, uint32_t val, int len, uint32_t pos) "%s addr 0x%x val 0x%x len %d exp_cap 0x%x"

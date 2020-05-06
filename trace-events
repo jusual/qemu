@@ -65,6 +65,7 @@ memory_region_ram_device_write(int cpu_index, void *mr, uint64_t addr, uint64_t 
 flatview_new(void *view, void *root) "%p (root %p)"
 flatview_destroy(void *view, void *root) "%p (root %p)"
 flatview_destroy_rcu(void *view, void *root) "%p (root %p)"
+memory_access_is_direct(const char *name, int is_write) "%s is_write=%d"
 
 # gdbstub.c
 gdbstub_op_start(const char *device) "Starting gdbstub using device %s"

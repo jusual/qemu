@@ -3,10 +3,25 @@
 # pci.c
 pci_update_mappings_del(void *d, uint32_t bus, uint32_t slot, uint32_t func, int bar, uint64_t addr, uint64_t size) "d=%p %02x:%02x.%x %d,0x%"PRIx64"+0x%"PRIx64
 pci_update_mappings_add(void *d, uint32_t bus, uint32_t slot, uint32_t func, int bar, uint64_t addr, uint64_t size) "d=%p %02x:%02x.%x %d,0x%"PRIx64"+0x%"PRIx64
+pcie_cfg_write(const char *dev, uint64_t addr, uint64_t val, unsigned len) "%s addr 0x%"PRIx64" val 0x%"PRIx64" len %u"
+pcie_cfg_read(const char *dev, uint64_t addr, uint64_t val, unsigned len) "%s addr 0x%"PRIx64" val 0x%"PRIx64" len %u"
+pcie_cfg_write_outside(const char *dev, uint64_t addr, uint64_t val, unsigned len) "%s addr 0x%"PRIx64" val 0x%"PRIx64" len %u"
+pcie_cfg_read_outside(const char *dev, uint64_t addr, unsigned len) "%s addr 0x%"PRIx64" len %u"
+
+# pci_bridge.c
+pci_bridge_write_config(const char *name, uint32_t addr, uint32_t val, int len) "%s addr 0x%x val 0x%x len %d"
 
 # pci_host.c
 pci_cfg_read(const char *dev, unsigned devid, unsigned fnid, unsigned offs, unsigned val) "%s %02u:%u @0x%x -> 0x%x"
 pci_cfg_write(const char *dev, unsigned devid, unsigned fnid, unsigned offs, unsigned val) "%s %02u:%u @0x%x <- 0x%x"
+
+# pcie.c
+pcie_cap_slot_write_config(const char *name, uint32_t addr, uint32_t val, int len) "%s addr 0x%x val 0x%x len %d"
+
+# pcie_host.c
+pcie_host_data_read(void)
+pcie_host_data_write(void)
+pci_cfg_no_device(uint32_t addr) "addr 0x%" PRIx32
 
 # msix.c
 msix_write_config(char *name, bool enabled, bool masked) "dev %s enabled %d masked %d"

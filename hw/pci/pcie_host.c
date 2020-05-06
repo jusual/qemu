@@ -24,63 +24,40 @@
 #include "hw/pci/pcie_host.h"
 #include "qemu/module.h"
 #include "exec/address-spaces.h"
-
-/* a helper function to get a PCIDevice for a given mmconfig address */
-static inline PCIDevice *pcie_dev_find_by_mmcfg_addr(PCIBus *s,
-                                                     uint32_t mmcfg_addr)
-{
-    return pci_find_device(s, PCIE_MMCFG_BUS(mmcfg_addr),
-                           PCIE_MMCFG_DEVFN(mmcfg_addr));
-}
-
-static void pcie_mmcfg_data_write(void *opaque, hwaddr mmcfg_addr,
+#include "trace.h"
+/*
+static void pcie_host_data_write(void *opaque, hwaddr mmcfg_addr,
                                   uint64_t val, unsigned len)
 {
-    PCIExpressHost *e = opaque;
-    PCIBus *s = e->pci.bus;
-    PCIDevice *pci_dev = pcie_dev_find_by_mmcfg_addr(s, mmcfg_addr);
-    uint32_t addr;
-    uint32_t limit;
-
-    if (!pci_dev) {
-        return;
-    }
-    addr = PCIE_MMCFG_CONFOFFSET(mmcfg_addr);
-    limit = pci_config_size(pci_dev);
-    pci_host_config_write_common(pci_dev, addr, limit, val, len);
+    trace_pcie_host_data_write();
 }
 
-static uint64_t pcie_mmcfg_data_read(void *opaque,
+static uint64_t pcie_host_data_read(void *opaque,
                                      hwaddr mmcfg_addr,
                                      unsigned len)
 {
-    PCIExpressHost *e = opaque;
-    PCIBus *s = e->pci.bus;
-    PCIDevice *pci_dev = pcie_dev_find_by_mmcfg_addr(s, mmcfg_addr);
-    uint32_t addr;
-    uint32_t limit;
-
-    if (!pci_dev) {
-        return ~0x0;
-    }
-    addr = PCIE_MMCFG_CONFOFFSET(mmcfg_addr);
-    limit = pci_config_size(pci_dev);
-    return pci_host_config_read_common(pci_dev, addr, limit, len);
+    trace_pcie_host_data_read();
+    return ~0x0;
 }
 
-static const MemoryRegionOps pcie_mmcfg_ops = {
-    .read = pcie_mmcfg_data_read,
-    .write = pcie_mmcfg_data_write,
+static const MemoryRegionOps pcie_host_ops = {
+    .read = pcie_host_data_read,
+    .write = pcie_host_data_write,
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
-
+*/
 static void pcie_host_init(Object *obj)
 {
     PCIExpressHost *e = PCIE_HOST_BRIDGE(obj);
+    void *ptr;
+    Error *err;
 
     e->base_addr = PCIE_BASE_ADDR_UNMAPPED;
-    memory_region_init_io(&e->mmio, OBJECT(e), &pcie_mmcfg_ops, e, "pcie-mmcfg-mmio",
-                          PCIE_MMCFG_SIZE_MAX);
+//    memory_region_init_allones(&e->mmio, OBJECT(e), "pcie-mmcfg-mmio", PCIE_MMCFG_SIZE_MAX);
+//    memory_region_init_io(&e->mmio, OBJECT(e), &pcie_host_ops, e, "pcie-mmcfg-mmio", PCIE_MMCFG_SIZE_MAX);
+    memory_region_init_rom(&e->mmio, OBJECT(e), "pcie-mmcfg-rom", PCIE_MMCFG_SIZE_MAX, &err);
+    ptr = memory_region_get_ram_ptr(&e->mmio);
+    memset(ptr, 0xff, e->mmio.size);
 }
 
 void pcie_host_mmcfg_unmap(PCIExpressHost *e)
@@ -105,7 +82,8 @@ void pcie_host_mmcfg_map(PCIExpressHost *e, hwaddr addr,
 {
     pcie_host_mmcfg_init(e, size);
     e->base_addr = addr;
-    memory_region_add_subregion(get_system_memory(), e->base_addr, &e->mmio);
+    memory_region_add_subregion(get_system_memory(), e->base_addr,
+                                        &e->mmio); //priority?
 }
 
 void pcie_host_mmcfg_update(PCIExpressHost *e,

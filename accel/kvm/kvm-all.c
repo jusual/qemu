@@ -316,9 +316,9 @@ static int kvm_set_user_memory_region(KVMMemoryListener *kml, KVMSlot *slot, boo
     mem.memory_size = slot->memory_size;
     ret = kvm_vm_ioctl(s, KVM_SET_USER_MEMORY_REGION, &mem);
     slot->old_flags = mem.flags;
-err:
     trace_kvm_set_user_memory(mem.slot, mem.flags, mem.guest_phys_addr,
                               mem.memory_size, mem.userspace_addr, ret);
+err:
     if (ret < 0) {
         error_report("%s: KVM_SET_USER_MEMORY_REGION failed, slot=%d,"
                      " start=0x%" PRIx64 ", size=0x%" PRIx64 ": %s",
@@ -437,6 +437,9 @@ static int kvm_mem_flags(MemoryRegion *mr)
     }
     if (readonly && kvm_readonly_mem_allowed) {
         flags |= KVM_MEM_READONLY;
+        if (mr->allones) {
+            flags |= KVM_MEM_ALLONES;
+        }
     }
     return flags;
 }
@@ -1031,10 +1034,11 @@ static void kvm_set_phys_mem(KVMMemoryListener *kml,
     MemoryRegion *mr = section->mr;
     bool writeable = !mr->readonly && !mr->rom_device;
     hwaddr start_addr, size, slot_size;
-    void *ram;
+    void *ram = NULL;
 
     if (!memory_region_is_ram(mr)) {
         if (writeable || !kvm_readonly_mem_allowed) {
+            trace_kvm_set_phys_mem_writeable(mr->name);
             return;
         } else if (!mr->romd_mode) {
             /* If the memory device is not in romd_mode, then we actually want
@@ -1048,9 +1052,11 @@ static void kvm_set_phys_mem(KVMMemoryListener *kml,
         return;
     }
 
-    /* use aligned delta to align the ram address */
-    ram = memory_region_get_ram_ptr(mr) + section->offset_within_region +
-          (start_addr - section->offset_within_address_space);
+    if (!mr->allones) {
+        /* use aligned delta to align the ram address */
+        ram = memory_region_get_ram_ptr(mr) + section->offset_within_region +
+            (start_addr - section->offset_within_address_space);
+    }
 
     kvm_slots_lock(kml);
 
@@ -1105,7 +1111,9 @@ static void kvm_set_phys_mem(KVMMemoryListener *kml,
             abort();
         }
         start_addr += slot_size;
-        ram += slot_size;
+        if (!mr->allones) {
+            ram += slot_size;
+        }
         size -= slot_size;
     } while (size);
 
@@ -2391,7 +2399,8 @@ int kvm_cpu_exec(CPUState *cpu)
             ret = 0;
             break;
         case KVM_EXIT_MMIO:
-            DPRINTF("handle_mmio\n");
+            DPRINTF("handle_mmio \n");
+            trace_kvm_run_exit_mmio(run->mmio.phys_addr);
             /* Called outside BQL */
             address_space_rw(&address_space_memory,
                              run->mmio.phys_addr, attrs,

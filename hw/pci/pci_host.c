@@ -31,7 +31,7 @@
 
 #ifdef DEBUG_PCI
 #define PCI_DPRINTF(fmt, ...) \
-do { printf("pci_host_data: " fmt , ## __VA_ARGS__); } while (0)
+do { fprintf(stderr, "pci_host_data: " fmt , ## __VA_ARGS__); } while (0)
 #else
 #define PCI_DPRINTF(fmt, ...)
 #endif
@@ -112,6 +112,7 @@ void pci_data_write(PCIBus *s, uint32_t addr, uint32_t val, unsigned len)
     uint32_t config_addr = addr & (PCI_CONFIG_SPACE_SIZE - 1);
 
     if (!pci_dev) {
+        trace_pci_cfg_no_device(addr);
         return;
     }
 
@@ -125,6 +126,7 @@ uint32_t pci_data_read(PCIBus *s, uint32_t addr, unsigned len)
     uint32_t config_addr = addr & (PCI_CONFIG_SPACE_SIZE - 1);
 
     if (!pci_dev) {
+        trace_pci_cfg_no_device(addr);
         return ~0x0;
     }
 

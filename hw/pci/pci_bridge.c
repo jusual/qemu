@@ -35,6 +35,7 @@
 #include "qemu/module.h"
 #include "qemu/range.h"
 #include "qapi/error.h"
+#include "trace.h"
 
 /* PCI bridge subsystem vendor ID helper functions */
 #define PCI_SSVID_SIZEOF        8
@@ -254,6 +255,8 @@ void pci_bridge_write_config(PCIDevice *d,
     PCIBridge *s = PCI_BRIDGE(d);
     uint16_t oldctl = pci_get_word(d->config + PCI_BRIDGE_CONTROL);
     uint16_t newctl;
+
+    trace_pci_bridge_write_config(d->name, address, val, len);
 
     pci_default_write_config(d, address, val, len);
 

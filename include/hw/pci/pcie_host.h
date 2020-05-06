@@ -47,6 +47,8 @@ struct PCIExpressHost {
 
     /* MMCONFIG mmio area */
     MemoryRegion mmio;
+
+    uint8_t *allones_hole;
 };
 
 void pcie_host_mmcfg_unmap(PCIExpressHost *e);

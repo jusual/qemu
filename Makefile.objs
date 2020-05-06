@@ -166,6 +166,7 @@ trace-events-subdirs += hw/net
 trace-events-subdirs += hw/nvram
 trace-events-subdirs += hw/pci
 trace-events-subdirs += hw/pci-host
+trace-events-subdirs += hw/pci-bridge
 trace-events-subdirs += hw/ppc
 trace-events-subdirs += hw/rdma
 trace-events-subdirs += hw/rdma/vmw

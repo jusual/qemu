@@ -85,6 +85,8 @@ struct PCIExpressDevice {
 
 #define COMPAT_PROP_PCP "power_controller_present"
 
+void pcie_dev_map_mmio_cfg(PCIBus *bus, PCIDevice *dev, void *opaque);
+
 /* PCI express capability helper functions */
 int pcie_cap_init(PCIDevice *dev, uint8_t offset, uint8_t type,
                   uint8_t port, Error **errp);

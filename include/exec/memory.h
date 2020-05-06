@@ -27,6 +27,7 @@
 #include "qemu/notify.h"
 #include "qom/object.h"
 #include "qemu/rcu.h"
+#include "trace.h"
 
 #define RAM_ADDR_INVALID (~(ram_addr_t)0)
 
@@ -374,6 +375,7 @@ struct MemoryRegion {
     bool ram;
     bool subpage;
     bool readonly; /* For RAM regions */
+    bool allones;
     bool nonvolatile;
     bool rom_device;
     bool flush_coalesced_mmio;
@@ -774,6 +776,19 @@ void memory_region_ref(MemoryRegion *mr);
 void memory_region_unref(MemoryRegion *mr);
 
 /**
+ * memory_region_init_allones: Initialize R/O memory region which returns ff on read.
+ *
+ * @mr: the #MemoryRegion to be initialized.
+ * @owner: the object that tracks the region's reference count
+ * @name: used for debugging; not visible to the user or ABI
+ * @size: size of the region.
+ */
+void memory_region_init_allones(MemoryRegion *mr,
+                                struct Object *owner,
+                                const char *name,
+                                uint64_t size);
+
+/**
  * memory_region_init_io: Initialize an I/O memory region.
  *
  * Accesses into the region will cause the callbacks in @ops to be called.
@@ -990,6 +1005,11 @@ void memory_region_init_alias(MemoryRegion *mr,
                               hwaddr offset,
                               uint64_t size);
 
+void memory_region_init_rom_ptr(MemoryRegion *mr,
+                                      struct Object *owner,
+                                      const char *name,
+                                      uint64_t size,
+                                      void *ptr);
 /**
  * memory_region_init_rom_nomigrate: Initialize a ROM memory region.
  *
@@ -2348,17 +2368,7 @@ void address_space_read_cached_slow(MemoryRegionCache *cache,
 void address_space_write_cached_slow(MemoryRegionCache *cache,
                                      hwaddr addr, const void *buf, hwaddr len);
 
-static inline bool memory_access_is_direct(MemoryRegion *mr, bool is_write)
-{
-    if (is_write) {
-        return memory_region_is_ram(mr) && !mr->readonly &&
-               !mr->rom_device && !memory_region_is_ram_device(mr);
-    } else {
-        return (memory_region_is_ram(mr) && !memory_region_is_ram_device(mr)) ||
-               memory_region_is_romd(mr);
-    }
-}
-
+bool memory_access_is_direct(MemoryRegion *mr, bool is_write);
 /**
  * address_space_read: read from an address space.
  *

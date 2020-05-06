@@ -24,10 +24,13 @@
 #include "hw/pci/pcie.h"
 #include "hw/pci/msix.h"
 #include "hw/pci/msi.h"
+#include "hw/pci/pci.h"
 #include "hw/pci/pci_bus.h"
+#include "hw/pci/pcie_host.h"
 #include "hw/pci/pcie_regs.h"
 #include "hw/pci/pcie_port.h"
 #include "qemu/range.h"
+#include "trace.h"
 
 //#define DEBUG_PCIE
 #ifdef DEBUG_PCIE
@@ -39,6 +42,17 @@
 #define PCIE_DEV_PRINTF(dev, fmt, ...)                                  \
     PCIE_DPRINTF("%s:%x "fmt, (dev)->name, (dev)->devfn, ## __VA_ARGS__)
 
+
+void pcie_dev_map_mmio_cfg(PCIBus *bus, PCIDevice *dev, void *opaque)
+{
+    PCIBus *rootbus = pci_device_root_bus(dev);
+    uint8_t bus_num = pci_bus_num(bus);
+    uint32_t mmio_addr = (bus_num << PCIE_MMCFG_BUS_BIT) |
+                         (dev->devfn << PCIE_MMCFG_DEVFN_BIT);
+    PCIExpressHost *host = PCIE_HOST_BRIDGE(rootbus->qbus.parent);
+
+    memory_region_add_subregion(&host->mmio, mmio_addr, &dev->pcie_cfg);
+}
 
 /***************************************************************************
  * pci express capability helper functions
@@ -637,6 +651,8 @@ void pcie_cap_slot_write_config(PCIDevice *dev,
     uint32_t pos = dev->exp.exp_cap;
     uint8_t *exp_cap = dev->config + pos;
     uint16_t sltsta = pci_get_word(exp_cap + PCI_EXP_SLTSTA);
+
+    trace_pcie_cap_slot_write_config(dev->name, addr, val, len);
 
     if (ranges_overlap(addr, len, pos + PCI_EXP_SLTSTA, 2)) {
         /*
