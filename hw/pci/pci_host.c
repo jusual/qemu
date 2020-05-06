@@ -169,6 +169,7 @@ static uint64_t pci_host_data_read(void *opaque,
                                    hwaddr addr, unsigned len)
 {
     PCIHostState *s = opaque;
+    uint64_t val;
 
     if (!(s->config_reg & (1U << 31))) {
         return 0xffffffff;

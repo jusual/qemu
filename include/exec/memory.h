@@ -374,6 +374,7 @@ struct MemoryRegion {
     bool ram;
     bool subpage;
     bool readonly; /* For RAM regions */
+    bool allones;
     bool nonvolatile;
     bool rom_device;
     bool flush_coalesced_mmio;
@@ -772,6 +773,19 @@ void memory_region_ref(MemoryRegion *mr);
  * @mr: the #MemoryRegion
  */
 void memory_region_unref(MemoryRegion *mr);
+
+/**
+ * memory_region_init_allones: Initialize R/O memory region which returns ff on read.
+ *
+ * @mr: the #MemoryRegion to be initialized.
+ * @owner: the object that tracks the region's reference count
+ * @name: used for debugging; not visible to the user or ABI
+ * @size: size of the region.
+ */
+void memory_region_init_allones(MemoryRegion *mr,
+                                struct Object *owner,
+                                const char *name,
+                                uint64_t size);
 
 /**
  * memory_region_init_io: Initialize an I/O memory region.
