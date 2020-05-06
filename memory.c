@@ -1488,6 +1488,16 @@ MemTxResult memory_region_dispatch_write(MemoryRegion *mr,
     }
 }
 
+void memory_region_init_allones(MemoryRegion *mr,
+                                Object *owner,
+                                const char *name,
+                                uint64_t size)
+{
+    memory_region_init(mr, owner, name, size);
+    mr->readonly = true;
+    mr->allones = true;
+}
+
 void memory_region_init_io(MemoryRegion *mr,
                            Object *owner,
                            const MemoryRegionOps *ops,

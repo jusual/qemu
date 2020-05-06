@@ -437,6 +437,9 @@ static int kvm_mem_flags(MemoryRegion *mr)
     }
     if (readonly && kvm_readonly_mem_allowed) {
         flags |= KVM_MEM_READONLY;
+        if (mr->allones) {
+            flags |= KVM_MEM_ALLONES;
+        }
     }
     return flags;
 }
