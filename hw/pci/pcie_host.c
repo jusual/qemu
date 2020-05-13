@@ -27,7 +27,7 @@
 #include "trace.h"
 
 /* a helper function to get a PCIDevice for a given mmconfig address */
-/*static inline PCIDevice *pcie_dev_find_by_mmcfg_addr(PCIBus *s,
+static inline PCIDevice *pcie_dev_find_by_mmcfg_addr(PCIBus *s,
                                                      uint32_t mmcfg_addr)
 {
     return pci_find_device(s, PCIE_MMCFG_BUS(mmcfg_addr),
@@ -78,14 +78,14 @@ static const MemoryRegionOps pcie_mmcfg_ops = {
     .write = pcie_mmcfg_data_write,
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
-*/
+
 static void pcie_host_init(Object *obj)
 {
     PCIExpressHost *e = PCIE_HOST_BRIDGE(obj);
 
     e->base_addr = PCIE_BASE_ADDR_UNMAPPED;
-    memory_region_init_allones(&e->mmio, OBJECT(e), "pcie-mmcfg-mmio",
-                               PCIE_MMCFG_SIZE_MAX);
+    memory_region_init_io(&e->mmio, OBJECT(e), &pcie_mmcfg_ops, e, "pcie-mmcfg-mmio",
+                          PCIE_MMCFG_SIZE_MAX);
 }
 
 void pcie_host_mmcfg_unmap(PCIExpressHost *e)
@@ -110,7 +110,7 @@ void pcie_host_mmcfg_map(PCIExpressHost *e, hwaddr addr,
 {
     pcie_host_mmcfg_init(e, size);
     e->base_addr = addr;
-    memory_region_add_subregion(get_system_memory(), e->base_addr, &e->mmio); //priority?
+    memory_region_add_subregion(get_system_memory(), e->base_addr, &e->mmio);
 }
 
 void pcie_host_mmcfg_update(PCIExpressHost *e,

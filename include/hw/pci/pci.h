@@ -271,7 +271,6 @@ struct PCIDevice {
     /* PCI config space */
     uint8_t *config;
 
-    MemoryRegion exp_config;
     /* Used to enable config checks on load. Note that writable bits are
      * never checked even if set in cmask. */
     uint8_t *cmask;

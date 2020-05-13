@@ -991,28 +991,6 @@ static bool pci_bus_devfn_reserved(PCIBus *bus, int devfn)
     return bus->slot_reserved_mask & (1UL << PCI_SLOT(devfn));
 }
 
-static void exp_config_write(void *opaque, hwaddr addr,
-                                  uint64_t val, unsigned len)
-{
-    PCIDevice* pci_dev = PCI_DEVICE(opaque);
-
-    pci_dev->config_write(pci_dev, addr, val, len);
-}
-
-static uint64_t exp_config_read(void *opaque, uint64_t addr,
-                                     unsigned len)
-{
-    PCIDevice* pci_dev = PCI_DEVICE(opaque);
-
-    return pci_dev->config_read(pci_dev, addr, len);
-}
-
-static const MemoryRegionOps exp_config_ops = {
-    .read = exp_config_read,
-    .write = exp_config_write,
-    .endianness = DEVICE_LITTLE_ENDIAN,
-};
-
 /* -1 for devfn means auto assign */
 static PCIDevice *do_pci_register_device(PCIDevice *pci_dev,
                                          const char *name, int devfn,
@@ -1082,21 +1060,6 @@ static PCIDevice *do_pci_register_device(PCIDevice *pci_dev,
     pci_dev->irq_state = 0;
     pci_config_alloc(pci_dev);
 
-    if (pci_is_express(pci_dev)) {
-        char *cfg_name = g_strdup_printf("%s pcie-cfg", name);
-
-        memory_region_init_io(&pci_dev->exp_config,
-                              OBJECT(pci_dev),
-                              &exp_config_ops,
-                              pci_dev,
-                              cfg_name,
-                              pci_config_size(pci_dev));
-        memory_region_add_subregion(&pci_dev->bus_master_container_region,
-                                    0, // OFFSET?
-                                    &pci_dev->exp_config);
-        g_free(cfg_name);
-    }
-
     pci_config_set_vendor_id(pci_dev->config, pc->vendor_id);
     pci_config_set_device_id(pci_dev->config, pc->device_id);
     pci_config_set_revision(pci_dev->config, pc->revision);
@@ -1129,8 +1092,6 @@ static PCIDevice *do_pci_register_device(PCIDevice *pci_dev,
         return NULL;
     }
 
-
-    //set io mrs for config space
     if (!config_read)
         config_read = pci_default_read_config;
     if (!config_write)
