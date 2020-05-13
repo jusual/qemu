@@ -49,9 +49,9 @@
 #include "qapi/qapi-commands-misc.h"
 #include "qemu/cutils.h"
 
-#define DEBUG_PCI
+//#define DEBUG_PCI
 #ifdef DEBUG_PCI
-# define PCI_DPRINTF(format, ...)       fprintf(stderr, format, ## __VA_ARGS__)
+# define PCI_DPRINTF(format, ...)       printf(format, ## __VA_ARGS__)
 #else
 # define PCI_DPRINTF(format, ...)       do { } while (0)
 #endif

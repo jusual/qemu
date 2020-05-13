@@ -27,11 +27,11 @@
 #include "trace.h"
 
 /* debug PCI */
-#define DEBUG_PCI
+//#define DEBUG_PCI
 
 #ifdef DEBUG_PCI
 #define PCI_DPRINTF(fmt, ...) \
-do { fprintf(stderr, "pci_host_data: " fmt , ## __VA_ARGS__); } while (0)
+do { printf("pci_host_data: " fmt , ## __VA_ARGS__); } while (0)
 #else
 #define PCI_DPRINTF(fmt, ...)
 #endif
@@ -137,7 +137,7 @@ static void pci_host_config_write(void *opaque, hwaddr addr,
 {
     PCIHostState *s = opaque;
 
-    PCI_DPRINTF("%s addr 0x%"PRIx64" len %d val 0x%"PRIx64"\n",
+    PCI_DPRINTF("%s addr " TARGET_FMT_plx " len %d val %"PRIx64"\n",
                 __func__, addr, len, val);
     if (addr != 0 || len != 4) {
         return;
@@ -151,7 +151,7 @@ static uint64_t pci_host_config_read(void *opaque, hwaddr addr,
     PCIHostState *s = opaque;
     uint32_t val = s->config_reg;
 
-    PCI_DPRINTF("%s addr 0x%"PRIx64" len %d val 0x%"PRIx32"\n",
+    PCI_DPRINTF("%s addr " TARGET_FMT_plx " len %d val %"PRIx32"\n",
                 __func__, addr, len, val);
     return val;
 }
