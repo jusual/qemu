@@ -32,3 +32,6 @@ unin_read(uint64_t addr, uint64_t value) "addr=0x%" PRIx64 " val=0x%"PRIx64
 
 # pnv_phb4.c
 pnv_phb4_xive_notify(uint64_t notif_port, uint64_t data) "notif=@0x%"PRIx64" data=0x%"PRIx64
+
+# q35.c
+acpihp_mch_write_config(const char *name, uint64_t addr, uint64_t val) "%s: addr 0x%"PRIx64" val 0x%"PRIx64

@@ -36,6 +36,7 @@
 #include "qapi/error.h"
 #include "qapi/visitor.h"
 #include "qemu/module.h"
+#include "trace.h"
 
 /****************************************************************************
  * Q35 host
@@ -465,6 +466,8 @@ static void mch_write_config(PCIDevice *d,
                               uint32_t address, uint32_t val, int len)
 {
     MCHPCIState *mch = MCH_PCI_DEVICE(d);
+
+    trace_acpihp_mch_write_config(d->name, address, val);
 
     pci_default_write_config(d, address, val, len);
 

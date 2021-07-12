@@ -308,6 +308,8 @@ static void pci_do_device_reset(PCIDevice *dev)
 {
     int r;
 
+    trace_acpihp_pci_do_device_reset(dev);
+
     pci_device_deassert_intx(dev);
     assert(dev->irq_state == 0);
 
@@ -533,6 +535,8 @@ static int get_pci_config_device(QEMUFile *f, void *pv, size_t size,
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(s);
     uint8_t *config;
     int i;
+
+    trace_acpihp_get_pci_config_device(s);
 
     assert(size == pci_config_size(s));
     config = g_malloc(size);
@@ -1355,7 +1359,7 @@ static void pci_update_mappings(PCIDevice *d)
 
         /* now do the real mapping */
         if (r->addr != PCI_BAR_UNMAPPED) {
-            trace_pci_update_mappings_del(d, pci_dev_bus_num(d),
+            trace_acpihp_pci_update_mappings_del(d, pci_dev_bus_num(d),
                                           PCI_SLOT(d->devfn),
                                           PCI_FUNC(d->devfn),
                                           i, r->addr, r->size);
@@ -1363,7 +1367,7 @@ static void pci_update_mappings(PCIDevice *d)
         }
         r->addr = new_addr;
         if (r->addr != PCI_BAR_UNMAPPED) {
-            trace_pci_update_mappings_add(d, pci_dev_bus_num(d),
+            trace_acpihp_pci_update_mappings_add(d, pci_dev_bus_num(d),
                                           PCI_SLOT(d->devfn),
                                           PCI_FUNC(d->devfn),
                                           i, r->addr, r->size);
@@ -1413,6 +1417,8 @@ void pci_default_write_config(PCIDevice *d, uint32_t addr, uint32_t val_in, int 
 {
     int i, was_irq_disabled = pci_irq_disabled(d);
     uint32_t val = val_in;
+
+    trace_acpihp_pci_default_write_config(d, addr, val);
 
     assert(addr + l <= pci_config_size(d));
 
