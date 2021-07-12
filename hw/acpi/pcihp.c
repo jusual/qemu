@@ -115,6 +115,10 @@ static void acpi_set_pci_info(void)
     }
     bsel_is_set = true;
 
+    if (!host) {
+        return;
+    }
+
     bus = PCI_HOST_BRIDGE(host)->bus;
     if (bus) {
         /* Scan all PCI buses. Set property to enable acpi based hotplug. */

@@ -320,7 +320,10 @@ static void acpi_get_pci_holes(Range *hole, Range *hole64)
     Object *pci_host;
 
     pci_host = acpi_get_i386_pci_host();
-    g_assert(pci_host);
+
+    if (!pci_host) {
+        return;
+    }
 
     range_set_bounds1(hole,
                       object_property_get_uint(pci_host,
@@ -1760,6 +1763,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
         PCIBus *bus = NULL;
 
         pci_host = acpi_get_i386_pci_host();
+
         if (pci_host) {
             bus = PCI_HOST_BRIDGE(pci_host)->bus;
         }
@@ -2316,7 +2320,9 @@ static bool acpi_get_mcfg(AcpiMcfgInfo *mcfg)
     QObject *o;
 
     pci_host = acpi_get_i386_pci_host();
-    g_assert(pci_host);
+    if (!pci_host) {
+        return false;
+    }
 
     o = object_property_get_qobject(pci_host, PCIE_HOST_MCFG_BASE, NULL);
     if (!o) {
@@ -2346,7 +2352,7 @@ void acpi_build(AcpiBuildTables *tables, MachineState *machine)
     AcpiPmInfo pm;
     AcpiMiscInfo misc;
     AcpiMcfgInfo mcfg;
-    Range pci_hole, pci_hole64;
+    Range pci_hole = {}, pci_hole64 = {};
     uint8_t *u;
     size_t aml_len = 0;
     GArray *tables_blob = tables->table_data;
